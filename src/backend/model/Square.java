@@ -1,28 +1,16 @@
 package backend.model;
 
+import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 
-public class Square extends Figure {
+public class Square extends Rectangle {
 
-    private final Point topLeft, bottomRight;
-
-    public Square(Point topLeft, double size, Paint gradient, Shadow shadeType) {
-        super(gradient, shadeType);
-        this.topLeft = topLeft;
-        this.bottomRight = new Point(topLeft.x + size, topLeft.y + size);
+    public Square(Point topLeft, double size, LinearGradient gradient, Shadow shadeType) {
+        super(topLeft, new Point(topLeft.x + size, topLeft.y + size), gradient, shadeType);
     }
-
-    public Point getTopLeft() {
-        return topLeft;
-    }
-
-    public Point getBottomRight() {
-        return bottomRight;
-    }
-
     @Override
     public String toString() {
-        return String.format("Cuadrado [ %s , %s ]", topLeft, bottomRight);
+        return String.format("Cuadrado [ %s , %s ]", super.getTopLeft(), super.getBottomRight());
     }
 
 }

@@ -1,26 +1,21 @@
 package backend.model;
 
-import javafx.scene.paint.Paint;
+import javafx.scene.paint.RadialGradient;
 
-public class Circle extends Figure {
+public class Circle extends RadialFigure {
 
-    protected final Point centerPoint;
     protected final double radius;
 
-    public Circle(Point centerPoint, double radius, Paint gradient, Shadow shadeType) {
-        super(gradient, shadeType);
-        this.centerPoint = centerPoint;
+    public Circle(Point centerPoint, double radius, RadialGradient gradient, Shadow shadeType) {
+        super(centerPoint, radius * 2, radius * 2, gradient, shadeType);
         this.radius = radius;
     }
 
     @Override
     public String toString() {
-        return String.format("Círculo [Centro: %s, Radio: %.2f]", centerPoint, radius);
+        return String.format("Círculo [Centro: %s, Radio: %.2f]", this.getCenterPoint(), radius);
     }
 
-    public Point getCenterPoint() {
-        return centerPoint;
-    }
 
     public double getRadius() {
         return radius;

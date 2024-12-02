@@ -1,9 +1,14 @@
 package backend.model;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
+import javafx.scene.paint.RadialGradient;
+
+import java.awt.*;
 
 public abstract class Figure {
-    final private Paint gradient;
+    private Paint gradient;
     private Shadow shadeType;
     private boolean bevel;
 
@@ -18,9 +23,11 @@ public abstract class Figure {
         this.bevel = false;
     }
     public Paint getGradient() { return gradient; }
+    public void setGradient(Paint p) { this.gradient = p;}
     public Shadow getShadeType() { return shadeType; }
 
     public void setShadeType(Shadow shadeType) { this.shadeType = shadeType; }
 
 
 }
+
