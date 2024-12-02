@@ -5,24 +5,19 @@ import javafx.scene.paint.Paint;
 public abstract class Figure {
     final private Paint gradient;
     private Shadow shadeType;
+    private boolean bevel;
 
-    public boolean getBiselado() {
-        return biselado;
-    }
+    public boolean getBevel() { return bevel; }
 
-    public void setBiselado(boolean biselado) {
-        this.biselado = biselado;
-    }
+    public void setBevel(boolean bevel) { this.bevel = bevel; }
 
-    private boolean biselado;
 
     public Figure(Paint gradient, Shadow shadeType){
         this.gradient = gradient;
         this.shadeType = shadeType;
-        this.biselado = false;
+        this.bevel = false;
     }
     public Paint getGradient() { return gradient; }
-
     public Shadow getShadeType() { return shadeType; }
 
     public void setShadeType(Shadow shadeType) { this.shadeType = shadeType; }
