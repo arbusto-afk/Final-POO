@@ -113,9 +113,10 @@
 					}
 					case 2:
 					case 4: {
-*/
+
 					}
 				}
+*/
 				newFigure.setBevel(bevelCheckbox.isSelected());
 				canvasState.addFigure(newFigure);
 
