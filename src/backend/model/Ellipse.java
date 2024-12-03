@@ -21,4 +21,21 @@ public class Ellipse extends RadialFigure {
         return this.getHeight();
     }
 
+    @Override
+    public Figure turnRight() {
+        double currentMajorAxis = this.getsMayorAxis();
+        double currentMinorAxis = this.getsMinorAxis();
+
+        return new Ellipse(this.getCenterPoint(), this.getsMinorAxis(), this.getsMayorAxis(), this.getColors(), this.getShadeType());
+    }
+    @Override
+    public Figure flipH(){
+        Point newCenter = getCenterH(getCenterPoint(), this.getsMayorAxis()/2 );
+        return new Ellipse(newCenter, this.getsMayorAxis() ,this.getsMinorAxis(), this.getColors(), getShadeType());
+    }
+    public Figure flipV(){
+        Point newCenter = getCenterV(getCenterPoint(), this.getsMayorAxis()/2 );
+        return new Circle(newCenter, this.getsMayorAxis(), getColors(), getShadeType());
+    }
+
 }

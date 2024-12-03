@@ -11,5 +11,17 @@ public class Square extends Rectangle {
     public String toString() {
         return String.format("Cuadrado [ %s , %s ]", super.getTopLeft(), super.getBottomRight());
     }
+    public Figure flipH(){
+        double width = this.getBottomRight().getX()-  this.getTopLeft().getX();
+        Point newTopLeft = new Point(getTopLeft().getX() + width, getTopLeft().getY());
+
+        return new Square(newTopLeft, width , getColors(), getShadeType());
+    }
+    public Figure flipV(){
+        double height = this.getBottomRight().getY() - this.getTopLeft().getY();
+
+        Point newTopLeft = new Point(getTopLeft().getX(), getTopLeft().getY()+height);
+        return new Square(newTopLeft, height, getColors(), getShadeType());
+    }
 
 }

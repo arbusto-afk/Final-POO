@@ -14,22 +14,42 @@ public class Rectangle extends LinearFigure {
     }
     public Figure turnRight() {
 
-        double height = getBottomRight().getY() - getTopLeft().getY();
-        double width = getBottomRight().getX() - getTopLeft().getX();
+        double height = this.getBottomRight().getY() - this.getTopLeft().getY();
+        double width = this.getBottomRight().getX()-  this.getTopLeft().getX();
 
         Point centroide = getCentroide(height, width);
 
-        getTopLeft().x = centroide.getX() - (height/2);
-        getTopLeft().y = centroide.getY() - (width/2) ;
 
-        getBottomRight().x = centroide.getX() +(height/2);
-        getBottomRight().y = centroide.getY()+ (width/2) ;
-        return new Rectangle( getTopLeft(), getTopLeft(), this.getColors(), this.getShadeType());
+        double topLeftX = centroide.getX() - (height/2);
+        double topLeftY = centroide.getY() - (width/2) ;
+        Point topleft = new Point(topLeftX, topLeftY);
+
+        double bottomRightX = centroide.getX() +(height/2);
+        double bottomRightY = centroide.getY()+ (width/2) ;
+        Point bottomright = new Point(bottomRightX, bottomRightY);
+
+
+        return new Rectangle( topleft,  bottomright, this.getColors(), this.getShadeType());
     }
 
     private Point getCentroide(double height, double width) {
         double pointX = getTopLeft().getX() + (width / 2);
-        double pointY = getTopLeft().getY() + (height / 2);
+        double pointY = getTopLeft().getY()+ (height / 2);
         return new Point(pointX, pointY);
     }
+
+    public Figure flipH(){
+        double width = this.getBottomRight().getX()-  this.getTopLeft().getX();
+        Point newTopLeft = new Point(getTopLeft().getX() + width, getTopLeft().getY());
+        Point newBottomRight =  new Point(getBottomRight().getX() + width , getBottomRight().getY());
+        return new Rectangle(newTopLeft, newBottomRight , getColors(), getShadeType());
+    }
+    public Figure flipV(){
+        double height = this.getBottomRight().getY() - this.getTopLeft().getY();
+        Point newBottomRight =  new Point(getBottomRight().getX(), getBottomRight().getY()+height );
+        Point newTopLeft = new Point(getTopLeft().getX(), getTopLeft().getY()+height);
+        return new Rectangle(newTopLeft, newBottomRight , getColors(), getShadeType());
+    }
+
+
 }

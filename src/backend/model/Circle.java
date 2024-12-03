@@ -21,4 +21,15 @@ public class Circle extends RadialFigure {
         return radius;
     }
 
+    @Override
+    public Figure flipH(){
+        Point newCenter = getCenterH(getCenterPoint(), getRadius());
+        return new Circle(newCenter, getRadius(), getColors(), getShadeType());
+    }
+    @Override
+    public Figure flipV(){
+        Point newCenter = getCenterV(getCenterPoint(), getRadius());
+        return new Circle(newCenter, getRadius(), getColors(), getShadeType());
+    }
+
 }

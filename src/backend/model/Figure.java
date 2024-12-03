@@ -28,6 +28,10 @@ public abstract class Figure {
 
     public  Figure turnRight(){ return null; };
 
+    public Figure flipH(){return null ;}
+    public Figure flipV(){return null ;}
+
+
 
 }
 

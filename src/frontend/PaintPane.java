@@ -46,7 +46,9 @@
 		ChoiceBox<Shadow> shadowTypeBox = new ChoiceBox<>();
 		CheckBox bevelCheckbox = new CheckBox("Biselado");
 		Button copyFormatButton = new Button("Copiar formato");
-		Button turnButton = new Button("Girar");
+		Button turnButton = new Button("Girar D");
+		Button flipHButton = new Button("Voltear H");
+		Button flipVButton = new Button("Voltear v");
 		// Selector de color de relleno
 
 		ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
@@ -243,10 +245,86 @@
 		}
 		private void onTurnButtonClick(ActionEvent event){
 			if (selectedFigure != null) {
+				Figure rotatedFigure = null;
+
 				if(selectedFigure instanceof Rectangle) {
-					Rectangle rectangle = (Rectangle) selectedFigure.turnRight();
+					Rectangle rectangle = (Rectangle) selectedFigure;
+					rotatedFigure = (Rectangle) selectedFigure.turnRight();
+				}
+				if(selectedFigure instanceof Ellipse){
+					Ellipse ellipse = (Ellipse) selectedFigure;
+					rotatedFigure= (Ellipse) selectedFigure.turnRight();
+				}
+				if (rotatedFigure != null) {
+					canvasState.addFigure(rotatedFigure);
+					// Opcional: Eliminar la figura original
+					//canvasState.deleteFigure(selectedFigure);
+					selectedFigure = rotatedFigure;
+					redrawCanvas();
 				}
 				redrawCanvas();
+			}
+		}
+		private void onFlipHButton( ActionEvent event){
+			if( selectedFigure!= null ){
+				Figure flipFigure = null;
+
+				if(selectedFigure instanceof Circle) {
+					Circle circle = (Circle) selectedFigure;
+					flipFigure = (Circle) selectedFigure.flipH();
+				}
+				if(selectedFigure instanceof Ellipse) {
+					Ellipse ellipse = (Ellipse) selectedFigure;
+					flipFigure = (Ellipse) selectedFigure.flipH();
+				}
+				if(selectedFigure instanceof Rectangle) {
+					Rectangle rectangle = (Rectangle) selectedFigure;
+					flipFigure = (Rectangle) selectedFigure.flipH();
+				}
+				if(selectedFigure instanceof Square) {
+					Square square = (Square) selectedFigure;
+					flipFigure = (Square) selectedFigure.flipH();
+				}
+
+				if (flipFigure != null) {
+					canvasState.addFigure(flipFigure);
+					// Opcional: Eliminar la figura original
+					//canvasState.deleteFigure(selectedFigure);
+					selectedFigure = flipFigure;
+					redrawCanvas();
+				}
+
+			}
+		}
+		private void onFlipVButton( ActionEvent event){
+			if( selectedFigure!= null ){
+				Figure flipFigure = null;
+
+				if(selectedFigure instanceof Circle) {
+					Circle circle = (Circle) selectedFigure;
+					flipFigure = (Circle) selectedFigure.flipV();
+				}
+				if(selectedFigure instanceof Ellipse) {
+					Ellipse ellipse = (Ellipse) selectedFigure;
+					flipFigure = (Ellipse) selectedFigure.flipV();
+				}
+				if(selectedFigure instanceof Rectangle) {
+					Rectangle rectangle = (Rectangle) selectedFigure;
+					flipFigure = (Rectangle) selectedFigure.flipV();
+				}
+				if(selectedFigure instanceof Square) {
+					Square square = (Square) selectedFigure;
+					flipFigure = (Square) selectedFigure.flipV();
+				}
+
+				if (flipFigure != null) {
+					canvasState.addFigure(flipFigure);
+					// Opcional: Eliminar la figura original
+					//canvasState.deleteFigure(selectedFigure);
+					selectedFigure = flipFigure;
+					redrawCanvas();
+				}
+
 			}
 		}
 
@@ -273,7 +351,7 @@
 					copyFormatButton
 			};
 
-			rightButtonsBox.getChildren().addAll(turnButton);
+			rightButtonsBox.getChildren().addAll(turnButton, flipHButton, flipVButton);
 
 			buttonsBox.getChildren().addAll(toolsArr);
 			buttonsBox.getChildren().addAll(additionalControls);
@@ -301,6 +379,8 @@
 			deleteButton.setOnAction(this::onDeleteButtonClick);
 			copyFormatButton.setOnAction(this::onCopyFormatButtonClick);
 			turnButton.setOnAction(this::onTurnButtonClick);
+			flipHButton.setOnAction(this:: onFlipHButton);
+			flipVButton.setOnAction(this:: onFlipVButton);
 	
 			setLeft(buttonsBox);
 			//setRight(canvas);
