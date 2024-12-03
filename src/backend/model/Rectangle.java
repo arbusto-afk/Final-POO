@@ -14,22 +14,22 @@ public class Rectangle extends LinearFigure {
     }
     public Figure turnRight() {
 
-        double height = bottomRight.getY() - topLeft.getY();
-        double width = bottomRight.getX() - topLeft.getX();
+        double height = getBottomRight().getY() - getTopLeft().getY();
+        double width = getBottomRight().getX() - getTopLeft().getX();
 
         Point centroide = getCentroide(height, width);
 
-        topLeft.x = centroide.getX() - (height/2);
-        topLeft.y = centroide.getY() - (width/2) ;
+        getTopLeft().x = centroide.getX() - (height/2);
+        getTopLeft().y = centroide.getY() - (width/2) ;
 
-        bottomRight.x = centroide.getX() +(height/2);
-        bottomRight.y = centroide.getY()+ (width/2) ;
-        return new Rectangle( topLeft,  bottomRight, this.getGradient(), this.getShadeType());
+        getBottomRight().x = centroide.getX() +(height/2);
+        getBottomRight().y = centroide.getY()+ (width/2) ;
+        return new Rectangle( getTopLeft(), getTopLeft(), this.getColors(), this.getShadeType());
     }
 
     private Point getCentroide(double height, double width) {
-        double pointX = topLeft.getX() + (width / 2);
-        double pointY = topLeft.getY() + (height / 2);
+        double pointX = getTopLeft().getX() + (width / 2);
+        double pointY = getTopLeft().getY() + (height / 2);
         return new Point(pointX, pointY);
     }
 }

@@ -46,7 +46,7 @@
 		ChoiceBox<Shadow> shadowTypeBox = new ChoiceBox<>();
 		CheckBox bevelCheckbox = new CheckBox("Biselado");
 		Button copyFormatButton = new Button("Copiar formato");
-		ToggleButton turnButton = new ToggleButton("Girar");
+		Button turnButton = new Button("Girar");
 		// Selector de color de relleno
 
 		ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
@@ -241,7 +241,7 @@
 				return;
 			copiedFigure = selectedFigure;
 		}
-		private void setTurnButton(ActionEvent event){
+		private void onTurnButtonClick(ActionEvent event){
 			if (selectedFigure != null) {
 				if(selectedFigure instanceof Rectangle) {
 					Rectangle rectangle = (Rectangle) selectedFigure.turnRight();
@@ -254,7 +254,7 @@
 		public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 			this.canvasState = canvasState;
 			this.statusPane = statusPane;
-			ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton, turnButton};
+			ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
 			for (ToggleButton tool : toolsArr) {
 				tool.setMinWidth(90);
 				tool.setToggleGroup(tools);
@@ -263,6 +263,7 @@
 
 			//Set left buttonsBox
 			VBox buttonsBox = new VBox(10);
+			VBox rightButtonsBox = new VBox(20);
 			Control[] additionalControls = {
 					bevelCheckbox,
 					formatText,
@@ -271,9 +272,11 @@
 					fillSecondaryColorPicker,
 					copyFormatButton
 			};
+
+			rightButtonsBox.getChildren().addAll(turnButton);
+
 			buttonsBox.getChildren().addAll(toolsArr);
 			buttonsBox.getChildren().addAll(additionalControls);
-
 			//setup choice box
 			shadowTypeBox.setValue(Shadow.NONE);
 			shadowTypeBox.getItems().addAll(Shadow.values());
@@ -281,6 +284,11 @@
 			buttonsBox.setPadding(new Insets(5));
 			buttonsBox.setStyle("-fx-background-color: #999");
 			buttonsBox.setPrefWidth(100);
+
+			rightButtonsBox.setPadding(new Insets(10));
+			rightButtonsBox.setStyle("-fx-background-color: #999");
+			rightButtonsBox.setPrefWidth(100);
+
 			gc.setLineWidth(1);
 
 			//setup event
@@ -292,9 +300,13 @@
 			canvas.setOnMouseDragged(this::onMouseDragged);
 			deleteButton.setOnAction(this::onDeleteButtonClick);
 			copyFormatButton.setOnAction(this::onCopyFormatButtonClick);
+			turnButton.setOnAction(this::onTurnButtonClick);
 	
 			setLeft(buttonsBox);
-			setRight(canvas);
+			//setRight(canvas);
+			setCenter(canvas);
+			setRight(rightButtonsBox);
+
 		}
 	
 		void redrawCanvas() {
