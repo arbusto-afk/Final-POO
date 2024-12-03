@@ -1,12 +1,11 @@
 package backend.model;
 
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Paint;
-
+import java.util.List;
+import java.awt.*;
 public class Square extends Rectangle {
 
-    public Square(Point topLeft, double size, LinearGradient gradient, Shadow shadeType) {
-        super(topLeft, new Point(topLeft.x + size, topLeft.y + size), gradient, shadeType);
+    public Square(Point topLeft, double size, List<Color> colors, Shadow shadeType) {
+        super(topLeft, new Point(topLeft.x + size, topLeft.y + size), colors, shadeType);
     }
     @Override
     public String toString() {

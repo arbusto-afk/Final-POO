@@ -1,13 +1,12 @@
 package backend.model;
 
-import javafx.scene.paint.RadialGradient;
-
+import java.awt.*;
+import java.util.List;
 public class Ellipse extends RadialFigure {
 
 
-    public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis, RadialGradient gradient, Shadow shadeType) {
-        super(centerPoint, sMayorAxis, sMinorAxis, gradient, shadeType);
-
+    public Ellipse(Point centerPoint, double sMayorAxis, double sMinorAxis, List<Color> colors, Shadow shadeType) {
+        super(centerPoint, sMayorAxis, sMinorAxis, colors, shadeType);
     }
 
     @Override
@@ -18,7 +17,6 @@ public class Ellipse extends RadialFigure {
     public double getsMayorAxis() {
         return this.getWidth();
     }
-
     public double getsMinorAxis() {
         return this.getHeight();
     }

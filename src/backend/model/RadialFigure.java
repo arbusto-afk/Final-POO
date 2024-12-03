@@ -1,30 +1,22 @@
 package backend.model;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.RadialGradient;
+
+import java.awt.*;
+import java.util.List;
 
 public abstract class RadialFigure extends Figure{
 
     private final Point centerPoint;
     private final double width, height;
 
-    public double getHeight() { return height; }
-
-    public double getWidth() { return width; }
-
-    public RadialFigure(Point centerPoint, double width, double height, RadialGradient gradient, Shadow shadeType) {
-        super(gradient, shadeType);
+    public RadialFigure(Point centerPoint, double width, double height, List<Color> colors, Shadow shadeType) {
+        super(colors, shadeType);
         this.centerPoint = centerPoint;
         this.width = width;
         this.height = height;
     }
-
+    public double getHeight() { return height; }
+    public double getWidth() { return width; }
     public Point getCenterPoint() {
         return centerPoint;
     }
-
-
-    @Override
-    public RadialGradient getGradient(){ return (RadialGradient) super.getGradient(); }
-    public void setGradient(RadialGradient p){ super.setGradient(p);}
-
 }

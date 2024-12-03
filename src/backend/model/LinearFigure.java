@@ -1,26 +1,17 @@
 package backend.model;
 
-import javafx.scene.paint.LinearGradient;
-
-import javax.sound.sampled.Line;
+import java.awt.*;
+import java.util.List;
 
 public abstract class LinearFigure extends Figure{
 
-    public Point getTopLeft() { return topLeft; }
+    private final Point topLeft, bottomRight;
 
-    public Point getBottomRight() { return bottomRight; }
-
-    protected final Point topLeft, bottomRight;
-
-    public LinearFigure(Point topLeft, Point bottomRight, LinearGradient gradient, Shadow shadeType){
-
-        super(gradient, shadeType);
+    public LinearFigure(Point topLeft, Point bottomRight, List<Color> colors, Shadow shadeType){
+        super(colors, shadeType);
         this.topLeft = topLeft;
         this.bottomRight = bottomRight;
     }
-
-    @Override
-    public LinearGradient getGradient(){ return (LinearGradient) super.getGradient(); }
-
-    public void setGradient(LinearGradient p){ super.setGradient(p);}
+    public Point getTopLeft() { return topLeft; }
+    public Point getBottomRight() { return bottomRight; }
 }

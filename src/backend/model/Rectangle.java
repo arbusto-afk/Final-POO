@@ -1,13 +1,11 @@
 package backend.model;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Paint;
-
+import java.util.List;
+import java.awt.*;
 public class Rectangle extends LinearFigure {
 
-    public Rectangle(Point topLeft, Point bottomRight, LinearGradient gradient, Shadow shadeType) {
-        super(topLeft, bottomRight, gradient, shadeType);
+    public Rectangle(Point topLeft, Point bottomRight, List<Color> colors, Shadow shadeType) {
+        super(topLeft, bottomRight, colors, shadeType);
     }
 
     @Override

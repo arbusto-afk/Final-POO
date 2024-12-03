@@ -15,6 +15,9 @@
 	import javafx.event.ActionEvent;
 	import javafx.scene.input.MouseEvent;
 
+	import java.util.ArrayList;
+	import java.util.List;
+
 	public class PaintPane extends BorderPane {
 	
 		// BackEnd
@@ -24,6 +27,7 @@
 		Canvas canvas = new Canvas(800, 600);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		Color lineColor = Color.BLACK;
+		Color selectedLineColor = Color.RED;
 		Color defaultFillColor = Color.YELLOW;
 		Color defaultSecondaryFillColor = Color.ORANGE;
 	
@@ -44,8 +48,11 @@
 		Button copyFormatButton = new Button("Copiar formato");
 		ToggleButton turnButton = new ToggleButton("Girar");
 		// Selector de color de relleno
+
 		ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
 		ColorPicker fillSecondaryColorPicker = new ColorPicker(defaultSecondaryFillColor);
+		//calculate shape gradient only from these color Picker
+		final ColorPicker[] colorPickers = {fillColorPicker, fillSecondaryColorPicker};
 		// Dibujar una figura
 		Point startPoint;
 		// Seleccionar una figura
@@ -94,21 +101,21 @@
 				switch (b.getText()) {
 					case squareText:
 						double size = Math.abs(endPoint.getX() - startPoint.getX());
-						newFigure = new Square(startPoint, size, (LinearGradient) gradient, shadowTypeBox.getValue());
+						newFigure = new Square(startPoint, size, colorListFromColorPickerArr(colorPickers), shadowTypeBox.getValue());
 						break;
 					case rectangleText: {
-						newFigure = new Rectangle(startPoint, endPoint, (LinearGradient) gradient, shadowTypeBox.getValue());
+						newFigure = new Rectangle(startPoint, endPoint,colorListFromColorPickerArr(colorPickers), shadowTypeBox.getValue());
 						break;
 					}
 					case circleText:
 						double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-						newFigure = new Circle(startPoint, circleRadius, (RadialGradient) gradient, shadowTypeBox.getValue());
+						newFigure = new Circle(startPoint, circleRadius, colorListFromColorPickerArr(colorPickers), shadowTypeBox.getValue());
 						break;
 					case ellipseText: {
 						Point centerPoint = new Point(Math.abs(endPoint.x + startPoint.x) / 2, (Math.abs((endPoint.y + startPoint.y)) / 2));
 						double sMayorAxis = Math.abs(endPoint.x - startPoint.x);
 						double sMinorAxis = Math.abs(endPoint.y - startPoint.y);
-						newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis, (RadialGradient) gradient, shadowTypeBox.getValue());
+						newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis, colorListFromColorPickerArr(colorPickers), shadowTypeBox.getValue());
 						break;
 					}
 					default: {
@@ -176,9 +183,13 @@
 				else {
 					figureToPasteFormatOnto.setShadeType(copiedFigure.getShadeType());
 					figureToPasteFormatOnto.setBevel(copiedFigure.getBevel());
-					//todo exception here
-					figureToPasteFormatOnto.setGradient(copiedFigure.getGradient());
+					if(figureToPasteFormatOnto instanceof LinearFigure) {
+						figureToPasteFormatOnto.setColors(copiedFigure.getColors());
+					} else {
+						figureToPasteFormatOnto.setColors(copiedFigure.getColors());
+					}
 					copiedFigure = null;
+					redrawCanvas();
 				}
 			}
 		}
@@ -281,7 +292,6 @@
 			canvas.setOnMouseDragged(this::onMouseDragged);
 			deleteButton.setOnAction(this::onDeleteButtonClick);
 			copyFormatButton.setOnAction(this::onCopyFormatButtonClick);
-			turnButton.setOnAction(this:: setTurnButton);
 	
 			setLeft(buttonsBox);
 			setRight(canvas);
@@ -290,25 +300,59 @@
 		void redrawCanvas() {
 			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			for(Figure figure : canvasState.figures()) {
-				if(figure == selectedFigure) {
-					gc.setStroke(Color.RED);
-				}
-				else {
-					gc.setStroke(lineColor);
-				}
-
 				switch (figure) {
 					case LinearFigure lf -> drawLinearFigure(lf);
 					case RadialFigure rf -> drawRadialFigure(rf);
-					default -> {
-					}
+					default -> throw new RuntimeException("Unsupported figure");
 				}
 			}
 		}
 
+		private RadialGradient radialGradientFromColorList(List<java.awt.Color> colors){
+			return new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
+					CycleMethod.NO_CYCLE,
+					createStopsFromColorList(colors));
+		}
+		private LinearGradient linearGradientFromColorList(List<java.awt.Color> colors) {
+			return new LinearGradient(0, 0, 1, 0, true,
+					CycleMethod.NO_CYCLE,
+					createStopsFromColorList(colors));
+		}
+
+		private List<Stop> createStopsFromColorList(List<java.awt.Color> list){
+			List<Stop> stops = new ArrayList<>();
+			for(java.awt.Color c : list){
+				double travelPercentage = (double)stops.size() / (list.size() - 1);
+				stops.add(new Stop(travelPercentage, awtColorToFxColor(c)));
+			}
+			return stops;
+		}
+		private List<java.awt.Color> colorListFromColorPickerArr(ColorPicker[] arr){
+			List<java.awt.Color> res = new ArrayList<>();
+			for(ColorPicker p : arr){
+				res.add(fxColorToAwtColor(p.getValue()));
+			}
+			return res;
+		}
+
+		private Color awtColorToFxColor(java.awt.Color c){
+			return new Color(
+					(double) c.getRed() / 255,
+					(double) c.getGreen() / 255,
+					(double)c.getBlue() / 255,
+					(double)c.getAlpha() / 255);
+		}
+		private java.awt.Color fxColorToAwtColor(Color c){
+			return new java.awt.Color(
+					(float)c.getRed(),
+					(float)c.getGreen(),
+					(float)c.getBlue(),
+					(float)c.getOpacity());
+		}
+
 		private void drawRadialFigure(RadialFigure figure){
 			if(figure.getShadeType() != Shadow.NONE){
-				gc.setFill(figure.getShadeType().getShadowColor(figure.getGradient()));
+				gc.setFill(awtColorToFxColor(figure.getShadeType().getShadowColor(figure.getColors().getLast())));
 				gc.fillOval(figure.getCenterPoint().getX() - figure.getWidth() / 2 + figure.getShadeType().getOffset(),
 						figure.getCenterPoint().getY() - figure.getHeight() / 2 + figure.getShadeType().getOffset(), figure.getWidth(), figure.getHeight());
 
@@ -316,8 +360,8 @@
 			if(figure.getBevel()){
 				drawRadialBevel(figure);
 			}
-
-			gc.setFill(figure.getGradient());
+			gc.setFill(radialGradientFromColorList(figure.getColors()));
+			gc.setStroke(figure == selectedFigure ? selectedLineColor : lineColor);
 			gc.strokeOval(figure.getCenterPoint().getX() - (figure.getWidth() / 2),  figure.getCenterPoint().getY() - (figure.getHeight() / 2), figure.getWidth(), figure.getHeight());
 			gc.fillOval(figure.getCenterPoint().getX() - (figure.getWidth() / 2), figure.getCenterPoint().getY() - (figure.getHeight() / 2), figure.getWidth(), figure.getHeight());
 
@@ -350,7 +394,7 @@
 
 		private void drawLinearFigure(LinearFigure figure){
 			if(figure.getShadeType() != Shadow.NONE) {
-				gc.setFill(figure.getShadeType().getShadowColor(figure.getGradient()));
+				gc.setFill(awtColorToFxColor(figure.getShadeType().getShadowColor(figure.getColors().getLast())));
 				gc.fillRect(figure.getTopLeft().getX() + figure.getShadeType().getOffset(),
 						figure.getTopLeft().getY() + figure.getShadeType().getOffset(),
 						Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()),
@@ -359,9 +403,10 @@
 			if(figure.getBevel()) {
 				drawLinearBevel(figure);
 			}
-			gc.setFill(figure.getGradient());
+			gc.setFill(linearGradientFromColorList(figure.getColors()));
 			gc.fillRect(figure.getTopLeft().getX(), figure.getTopLeft().getY(),
 					Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()), Math.abs(figure.getTopLeft().getY() - figure.getBottomRight().getY()));
+			gc.setStroke(figure == selectedFigure ? selectedLineColor : lineColor);
 			gc.strokeRect(figure.getTopLeft().getX(), figure.getTopLeft().getY(),
 					Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()), Math.abs(figure.getTopLeft().getY() - figure.getBottomRight().getY()));
 		}

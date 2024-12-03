@@ -1,13 +1,13 @@
 package backend.model;
 
-import javafx.scene.paint.RadialGradient;
-
+import java.util.List;
+import java.awt.*;
 public class Circle extends RadialFigure {
 
     protected final double radius;
 
-    public Circle(Point centerPoint, double radius, RadialGradient gradient, Shadow shadeType) {
-        super(centerPoint, radius * 2, radius * 2, gradient, shadeType);
+    public Circle(Point centerPoint, double radius, List<Color> colors, Shadow shadeType) {
+        super(centerPoint, radius * 2, radius * 2, colors, shadeType);
         this.radius = radius;
     }
 
