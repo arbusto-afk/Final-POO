@@ -35,7 +35,11 @@ public class Ellipse extends RadialFigure {
     }
     public Figure flipV(){
         Point newCenter = getCenterV(getCenterPoint(), this.getsMayorAxis()/2 );
-        return new Circle(newCenter, this.getsMayorAxis(), getColors(), getShadeType());
+        return new Ellipse(newCenter, this.getsMayorAxis(), this.getsMinorAxis(),getColors(), getShadeType());
+    }
+    public Figure duplicate(){
+        Point newCenter = new Point(getCenterPoint().getX()+DIM,getCenterPoint().getY()+DIM );
+        return new Ellipse(newCenter, this.getsMayorAxis(),this.getsMinorAxis(), getColors(), getShadeType() );
     }
 
 }

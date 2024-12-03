@@ -49,6 +49,7 @@
 		Button turnButton = new Button("Girar D");
 		Button flipHButton = new Button("Voltear H");
 		Button flipVButton = new Button("Voltear v");
+		Button duplicateButton = new Button("Duplicar");
 		// Selector de color de relleno
 
 		ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
@@ -327,6 +328,37 @@
 
 			}
 		}
+		private void onDuplicateButton( ActionEvent event){
+			if( selectedFigure!= null ){
+				Figure duplicateFigure = null;
+
+				if(selectedFigure instanceof Circle) {
+					Circle circle = (Circle) selectedFigure;
+					duplicateFigure = (Circle) selectedFigure.duplicate();
+				}
+				if(selectedFigure instanceof Ellipse) {
+					Ellipse ellipse = (Ellipse) selectedFigure;
+					duplicateFigure = (Ellipse) selectedFigure.duplicate();
+				}
+				if(selectedFigure instanceof Rectangle) {
+					Rectangle rectangle = (Rectangle) selectedFigure;
+					duplicateFigure = (Rectangle) selectedFigure.duplicate();
+				}
+				if(selectedFigure instanceof Square) {
+					Square square = (Square) selectedFigure;
+					duplicateFigure = (Square) selectedFigure.duplicate();
+				}
+
+				if (duplicateFigure != null) {
+					canvasState.addFigure(duplicateFigure);
+					// Opcional: Eliminar la figura original
+					//canvasState.deleteFigure(selectedFigure);
+					selectedFigure = duplicateFigure;
+					redrawCanvas();
+				}
+
+			}
+		}
 
 
 		public PaintPane(CanvasState canvasState, StatusPane statusPane) {
@@ -351,7 +383,7 @@
 					copyFormatButton
 			};
 
-			rightButtonsBox.getChildren().addAll(turnButton, flipHButton, flipVButton);
+			rightButtonsBox.getChildren().addAll(turnButton, flipHButton, flipVButton,duplicateButton);
 
 			buttonsBox.getChildren().addAll(toolsArr);
 			buttonsBox.getChildren().addAll(additionalControls);
@@ -381,6 +413,7 @@
 			turnButton.setOnAction(this::onTurnButtonClick);
 			flipHButton.setOnAction(this:: onFlipHButton);
 			flipVButton.setOnAction(this:: onFlipVButton);
+			duplicateButton.setOnAction(this::onDuplicateButton);
 	
 			setLeft(buttonsBox);
 			//setRight(canvas);

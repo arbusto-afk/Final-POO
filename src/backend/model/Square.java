@@ -24,4 +24,10 @@ public class Square extends Rectangle {
         return new Square(newTopLeft, height, getColors(), getShadeType());
     }
 
+    @Override
+    public Figure duplicate() {
+        double height = this.getBottomRight().getY() - this.getTopLeft().getY();
+        Point newTopLeft = new Point(getTopLeft().getX()+DIM, getTopLeft().getY()+DIM);
+        return new Square(newTopLeft, height, getColors(), getShadeType());
+    }
 }

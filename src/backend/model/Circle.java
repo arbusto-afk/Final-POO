@@ -4,6 +4,7 @@ import java.util.List;
 import java.awt.*;
 public class Circle extends RadialFigure {
 
+
     protected final double radius;
 
     public Circle(Point centerPoint, double radius, List<Color> colors, Shadow shadeType) {
@@ -30,6 +31,10 @@ public class Circle extends RadialFigure {
     public Figure flipV(){
         Point newCenter = getCenterV(getCenterPoint(), getRadius());
         return new Circle(newCenter, getRadius(), getColors(), getShadeType());
+    }
+    public Figure duplicate(){
+        Point newCenter = new Point(getCenterPoint().getX()+DIM,getCenterPoint().getY()+DIM );
+        return new Circle(newCenter,getRadius(), getColors(), getShadeType() );
     }
 
 }

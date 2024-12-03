@@ -7,6 +7,7 @@ import java.util.List;
 
 public abstract class Figure {
     private List<Color> colors;
+    protected static final int DIM = 3;
 
     private Shadow shadeType;
     private boolean bevel;
@@ -27,9 +28,9 @@ public abstract class Figure {
     public void setShadeType(Shadow shadeType) { this.shadeType = shadeType; }
 
     public  Figure turnRight(){ return null; };
-
     public Figure flipH(){return null ;}
     public Figure flipV(){return null ;}
+    public Figure duplicate(){return null;}
 
 
 

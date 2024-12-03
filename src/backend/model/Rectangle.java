@@ -50,6 +50,10 @@ public class Rectangle extends LinearFigure {
         Point newTopLeft = new Point(getTopLeft().getX(), getTopLeft().getY()+height);
         return new Rectangle(newTopLeft, newBottomRight , getColors(), getShadeType());
     }
-
+    public Figure duplicate(){
+        Point newBottomRight =  new Point(getBottomRight().getX()+DIM, getBottomRight().getY()+DIM );
+        Point newTopLeft = new Point(getTopLeft().getX()+DIM, getTopLeft().getY()+DIM);
+        return new Rectangle(newTopLeft, newBottomRight , getColors(), getShadeType());
+    }
 
 }
