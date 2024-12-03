@@ -42,6 +42,7 @@
 		ChoiceBox<Shadow> shadowTypeBox = new ChoiceBox<>();
 		CheckBox bevelCheckbox = new CheckBox("Biselado");
 		Button copyFormatButton = new Button("Copiar formato");
+		ToggleButton turnButton = new ToggleButton("Girar");
 		// Selector de color de relleno
 		ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
 		ColorPicker fillSecondaryColorPicker = new ColorPicker(defaultSecondaryFillColor);
@@ -229,11 +230,20 @@
 				return;
 			copiedFigure = selectedFigure;
 		}
+		private void setTurnButton(ActionEvent event){
+			if (selectedFigure != null) {
+				if(selectedFigure instanceof Rectangle) {
+					Rectangle rectangle = (Rectangle) selectedFigure.turnRight();
+				}
+				redrawCanvas();
+			}
+		}
+
 
 		public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 			this.canvasState = canvasState;
 			this.statusPane = statusPane;
-			ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
+			ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton, turnButton};
 			for (ToggleButton tool : toolsArr) {
 				tool.setMinWidth(90);
 				tool.setToggleGroup(tools);
@@ -271,6 +281,7 @@
 			canvas.setOnMouseDragged(this::onMouseDragged);
 			deleteButton.setOnAction(this::onDeleteButtonClick);
 			copyFormatButton.setOnAction(this::onCopyFormatButtonClick);
+			turnButton.setOnAction(this:: setTurnButton);
 	
 			setLeft(buttonsBox);
 			setRight(canvas);

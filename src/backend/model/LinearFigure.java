@@ -10,7 +10,7 @@ public abstract class LinearFigure extends Figure{
 
     public Point getBottomRight() { return bottomRight; }
 
-    private final Point topLeft, bottomRight;
+    protected final Point topLeft, bottomRight;
 
     public LinearFigure(Point topLeft, Point bottomRight, LinearGradient gradient, Shadow shadeType){
 

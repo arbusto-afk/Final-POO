@@ -28,6 +28,8 @@ public abstract class Figure {
 
     public void setShadeType(Shadow shadeType) { this.shadeType = shadeType; }
 
+    public  Figure turnRight(){ return null; };
+
 
 }
 
