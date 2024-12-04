@@ -142,40 +142,42 @@
 			startPoint = new Point(event.getX(), event.getY());
 		}
 		private void onMouseRelease(MouseEvent event) {
-			Point endPoint = new Point(event.getX(), event.getY());
 			if (startPoint == null) {
 				return;
 			}
+			Point endPoint = new Point(event.getX(), event.getY());
 			if (endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
 				return;
 			}
 			Figure newFigure;
-			ToggleButton b = (ToggleButton) (tools.getSelectedToggle());
-			if (b != null) {
-				switch (b.getText()) {
-					case squareText:
-						double size = Math.abs(endPoint.getX() - startPoint.getX());
-						newFigure = new Square(startPoint, size, colorListFromColorPickerArr(colorPickers), shadowTypeBox.getValue());
-						break;
-					case rectangleText: {
-						newFigure = new Rectangle(startPoint, endPoint,colorListFromColorPickerArr(colorPickers), shadowTypeBox.getValue());
-						break;
+				ToggleButton b = (ToggleButton) (tools.getSelectedToggle());
+				if (b != null) {
+					List<java.awt.Color> colors = colorListFromColorPickerArr(colorPickers);
+					Shadow shadowType = shadowTypeBox.getValue();
+					switch (b.getText()) {
+						case squareText:
+							double size = Math.abs(endPoint.getX() - startPoint.getX());
+							newFigure = new Square(startPoint, size, colors, shadowType);
+							break;
+						case rectangleText: {
+							newFigure = new Rectangle(startPoint, endPoint, colors, shadowType);
+							break;
+						}
+						case circleText:
+							double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
+							newFigure = new Circle(startPoint, circleRadius, colors, shadowType);
+							break;
+						case ellipseText: {
+							Point centerPoint = new Point(Math.abs(endPoint.x + startPoint.x) / 2, (Math.abs((endPoint.y + startPoint.y)) / 2));
+							double sMayorAxis = Math.abs(endPoint.x - startPoint.x);
+							double sMinorAxis = Math.abs(endPoint.y - startPoint.y);
+							newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis, colors, shadowType);
+							break;
+						}
+						default: {
+							return;
+						}
 					}
-					case circleText:
-						double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-						newFigure = new Circle(startPoint, circleRadius, colorListFromColorPickerArr(colorPickers), shadowTypeBox.getValue());
-						break;
-					case ellipseText: {
-						Point centerPoint = new Point(Math.abs(endPoint.x + startPoint.x) / 2, (Math.abs((endPoint.y + startPoint.y)) / 2));
-						double sMayorAxis = Math.abs(endPoint.x - startPoint.x);
-						double sMinorAxis = Math.abs(endPoint.y - startPoint.y);
-						newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis, colorListFromColorPickerArr(colorPickers), shadowTypeBox.getValue());
-						break;
-					}
-					default: {
-						return;
-					}
-				}
 
 
 				newFigure.setHasBevel(bevelCheckbox.isSelected());
