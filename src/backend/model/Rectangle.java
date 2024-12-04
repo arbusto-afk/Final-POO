@@ -12,6 +12,15 @@ public class Rectangle extends LinearFigure {
     public String toString() {
         return String.format("Rectángulo [ %s , %s ]", this.getTopLeft(), this.getBottomRight());
     }
+
+    @Override
+    public boolean pointBelongs(Point p) {
+        return p.getX() > this.getTopLeft().getX() &&
+                p.getX() < this.getBottomRight().getX() &&
+                p.getY() > this.getTopLeft().getY() &&
+                p.getY() < this.getBottomRight().getY();
+    }
+
     public Figure turnRight() {
 
         double height = this.getBottomRight().getY() - this.getTopLeft().getY();

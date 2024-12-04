@@ -1,6 +1,7 @@
 package backend;
 
 import backend.model.Figure;
+import backend.model.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,15 @@ public class CanvasState {
 
     public Iterable<Figure> figures() {
         return new ArrayList<>(list);
+    }
+
+    public Iterable<Figure> figuresAtPoint(Point p){
+        List<Figure> returnIterable = new ArrayList<>();
+        for(Figure fig : list){
+            if(fig.pointBelongs(p))
+                returnIterable.add(fig);
+        }
+        return returnIterable;
     }
 
 }

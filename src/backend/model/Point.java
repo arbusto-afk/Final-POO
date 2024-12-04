@@ -17,7 +17,27 @@ public class Point {
         return y;
     }
 
-    @Override
+    public Point centerPointTo(Point p){
+        return new Point(
+                this.getX() + ((this.getX() - p.getX()) / 2),
+                this.getY() + ((this.getY() - p.getY()) / 2)
+        );
+    }
+    public Point getDifference(Point p){
+        return new Point(
+                this.getX() - p.getX(),
+                this.getY() - p.getY()
+        );
+    }
+
+    public Point add(Point p) {
+        return new Point(
+                this.x + p.getX(),
+                this.y + p.getY()
+        );
+    }
+
+        @Override
     public String toString() {
         return String.format("{%.2f , %.2f}", x, y);
     }

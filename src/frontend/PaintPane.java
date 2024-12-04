@@ -14,6 +14,7 @@
 
 	import javafx.event.ActionEvent;
 	import javafx.scene.input.MouseEvent;
+	import jdk.jshell.spi.ExecutionControl;
 
 	import java.util.ArrayList;
 	import java.util.List;
@@ -26,6 +27,7 @@
 		// Canvas y relacionados
 		Canvas canvas = new Canvas(800, 600);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
+		ColorHandler ch = new ColorHandler();
 		Color lineColor = Color.BLACK;
 		Color selectedLineColor = Color.RED;
 		Color defaultFillColor = Color.YELLOW;
@@ -42,20 +44,22 @@
 		ToggleButton squareButton = new ToggleButton(squareText);
 		ToggleButton ellipseButton = new ToggleButton(ellipseText);
 		ToggleButton deleteButton = new ToggleButton("Borrar");
-		Label formatText = new Label("Formato:");
+		Label formatLabel = new Label("Formato:");
 		ChoiceBox<Shadow> shadowTypeBox = new ChoiceBox<>();
 		CheckBox bevelCheckbox = new CheckBox("Biselado");
-		Button copyFormatButton = new Button("Copiar formato");
-		Button turnButton = new Button("Girar D");
-		Button flipHButton = new Button("Voltear H");
-		Button flipVButton = new Button("Voltear v");
-		Button duplicateButton = new Button("Duplicar");
 		// Selector de color de relleno
-
 		ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
 		ColorPicker fillSecondaryColorPicker = new ColorPicker(defaultSecondaryFillColor);
 		//calculate shape gradient only from these color Picker
 		final ColorPicker[] colorPickers = {fillColorPicker, fillSecondaryColorPicker};
+		//Barra lateral derecha
+		Button copyFormatButton = new Button("Copiar formato");
+		Label actionLabel = new Label("Acciones");
+		Button turnButton = new Button("Girar D");
+		Button flipHorizontalButton = new Button("Voltear H");
+		Button flipVerticalButton = new Button("Voltear v");
+		Button duplicateButton = new Button("Duplicar");
+
 		// Dibujar una figura
 		Point startPoint;
 		// Seleccionar una figura
@@ -65,12 +69,76 @@
 		StatusPane statusPane;
 
 		ToggleGroup tools = new ToggleGroup();
-
 		final Integer bevelWidth = 7;
 
+		public PaintPane(CanvasState canvasState, StatusPane statusPane) {
+			this.canvasState = canvasState;
+			this.statusPane = statusPane;
+			ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
+			for (ToggleButton tool : toolsArr) {
+				tool.setMinWidth(90);
+				tool.setToggleGroup(tools);
+				tool.setCursor(Cursor.HAND);
+			}
 
-		// Colores de relleno de cada figura
-		//Map<Figure, Paint> figureColorMap = new HashMap<>();
+			//Set left leftButtonsBox
+			VBox leftButtonsBox = new VBox(10);
+			VBox rightButtonsBox = new VBox(10);
+			Control[] leftControls = {
+					bevelCheckbox,
+					formatLabel,
+					shadowTypeBox,
+					fillColorPicker,
+					fillSecondaryColorPicker,
+					copyFormatButton
+			};
+			Control[] rightControls = {
+					actionLabel,
+					turnButton,
+					flipHorizontalButton,
+					flipVerticalButton,
+					duplicateButton
+			};
+
+			rightButtonsBox.getChildren().addAll(rightControls);
+			leftButtonsBox.getChildren().addAll(toolsArr);
+			leftButtonsBox.getChildren().addAll(leftControls);
+			//setup choice box
+			shadowTypeBox.setValue(Shadow.NONE);
+			shadowTypeBox.getItems().addAll(Shadow.values());
+
+			leftButtonsBox.setPadding(new Insets(5));
+			leftButtonsBox.setStyle("-fx-background-color: #999");
+			leftButtonsBox.setPrefWidth(100);
+
+			rightButtonsBox.setPadding(new Insets(10));
+			rightButtonsBox.setStyle("-fx-background-color: #999");
+			rightButtonsBox.setPrefWidth(100);
+
+			gc.setLineWidth(1);
+
+			//setup event
+			shadowTypeBox.setOnAction(this::onChoiceBoxSelection);
+			canvas.setOnMousePressed(this::onMousePressed);
+			canvas.setOnMouseReleased(this::onMouseRelease);
+			canvas.setOnMouseMoved(this::onMouseMoved);
+			canvas.setOnMouseClicked(this::onMouseClicked);
+			canvas.setOnMouseDragged(this::onMouseDragged);
+			deleteButton.setOnAction(this::onDeleteButtonClick);
+			copyFormatButton.setOnAction(this::onCopyFormatButtonClick);
+			turnButton.setOnAction(this::onTurnButtonClick);
+			flipHorizontalButton.setOnAction(this::onFlipHorizontalButtonCLick);
+			flipVerticalButton.setOnAction(this::onFlipVerticalButton);
+			duplicateButton.setOnAction(this::onDuplicateButton);
+
+			setLeft(leftButtonsBox);
+			//setRight(canvas);
+			setCenter(canvas);
+			setRight(rightButtonsBox);
+
+		}
+
+
 		private void onMousePressed(MouseEvent event){
 			startPoint = new Point(event.getX(), event.getY());
 		}
@@ -83,24 +151,8 @@
 				return;
 			}
 			Figure newFigure;
-			Paint gradient;
-
-			//	figureColorMap.put(newFigure, gradient);
 			ToggleButton b = (ToggleButton) (tools.getSelectedToggle());
 			if (b != null) {
-				if (b.getText().equals(rectangleText) || b.getText().equals(squareText)) {
-					gradient = new LinearGradient(0, 0, 1, 0, true,
-							CycleMethod.NO_CYCLE,
-							new Stop(0, fillColorPicker.getValue()),
-							new Stop(1, fillSecondaryColorPicker.getValue()));
-
-				} else {
-					gradient = new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
-							CycleMethod.NO_CYCLE,
-							new Stop(0, fillColorPicker.getValue()),
-							new Stop(1, fillSecondaryColorPicker.getValue()));
-
-				}
 				switch (b.getText()) {
 					case squareText:
 						double size = Math.abs(endPoint.getX() - startPoint.getX());
@@ -127,7 +179,7 @@
 				}
 
 
-				newFigure.setBevel(bevelCheckbox.isSelected());
+				newFigure.setHasBevel(bevelCheckbox.isSelected());
 				canvasState.addFigure(newFigure);
 
 				startPoint = null;
@@ -137,18 +189,16 @@
 
 		private void onMouseMoved(MouseEvent event) {
 			Point eventPoint = new Point(event.getX(), event.getY());
-			boolean found = false;
-			StringBuilder label = new StringBuilder();
-			for (Figure figure : canvasState.figures()) {
-				if (figureBelongs(figure, eventPoint)) {
-					found = true;
-					label.append(figure.toString());
-				}
+			StringBuilder strB = new StringBuilder();
+			for(Figure fig : canvasState.	figuresAtPoint(eventPoint)){
+				strB.append(fig.toString());
 			}
-			if (found) {
-				statusPane.updateStatus(label.toString());
-			} else {
+			if (strB.isEmpty()) {
 				statusPane.updateStatus(eventPoint.toString());
+			}
+			else {
+				statusPane.updateStatus(strB.toString());
+
 			}
 		}
 		private void onMouseClicked(MouseEvent event){
@@ -156,72 +206,41 @@
 			if(selectionButton.isSelected()) {
 				boolean found = false;
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				for (Figure figure : canvasState.figures()) {
-					if (figureBelongs(figure, eventPoint)) {
-						found = true;
-						selectedFigure = figure;
-						label.append(figure.toString());
-					}
+				for (Figure fig : canvasState.figuresAtPoint(eventPoint)) {
+					label.append(fig.toString());
+					selectedFigure = fig;
+					found = true;
 				}
 				if (found) {
 					statusPane.updateStatus(label.toString());
 				} else {
-					selectedFigure = null;
 					statusPane.updateStatus("Ninguna figura encontrada");
+					selectedFigure = null;
 				}
 				redrawCanvas();
 			}
 			if(copiedFigure != null) {
-				boolean found;
 				Figure figureToPasteFormatOnto = null;
-				for (Figure figure : canvasState.figures()) {
-					if (figureBelongs(figure, eventPoint)) {
-						figureToPasteFormatOnto = figure;
-						break;
-					}
+				for (Figure figure : canvasState.figuresAtPoint(eventPoint)) {
+					figureToPasteFormatOnto = figure;
+					break;
 				}
-				if (figureToPasteFormatOnto == null) {
-					copiedFigure = null;
-				}
-				else {
+				if (figureToPasteFormatOnto != null) {
 					figureToPasteFormatOnto.setShadeType(copiedFigure.getShadeType());
-					figureToPasteFormatOnto.setBevel(copiedFigure.getBevel());
-					if(figureToPasteFormatOnto instanceof LinearFigure) {
-						figureToPasteFormatOnto.setColors(copiedFigure.getColors());
-					} else {
-						figureToPasteFormatOnto.setColors(copiedFigure.getColors());
-					}
-					copiedFigure = null;
+					figureToPasteFormatOnto.setHasBevel(copiedFigure.getHasBevel());
+					figureToPasteFormatOnto.setColors(copiedFigure.getColors());
 					redrawCanvas();
+
 				}
+				copiedFigure = null;
 			}
 		}
 		private void onMouseDragged(MouseEvent event){
-			if(selectionButton.isSelected()) {
-				Point eventPoint = new Point(event.getX(), event.getY());
-				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;
-				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
-				if(selectedFigure instanceof Rectangle) {
-					Rectangle rectangle = (Rectangle) selectedFigure;
-					rectangle.getTopLeft().x += diffX;
-					rectangle.getBottomRight().x += diffX;
-					rectangle.getTopLeft().y += diffY;
-					rectangle.getBottomRight().y += diffY;
-				} else if(selectedFigure instanceof Circle) {
-					Circle circle = (Circle) selectedFigure;
-					circle.getCenterPoint().x += diffX;
-					circle.getCenterPoint().y += diffY;
-				} else if(selectedFigure instanceof Square) {
-					Square square = (Square) selectedFigure;
-					square.getTopLeft().x += diffX;
-					square.getBottomRight().x += diffX;
-					square.getTopLeft().y += diffY;
-					square.getBottomRight().y += diffY;
-				} else if(selectedFigure instanceof Ellipse) {
-					Ellipse ellipse = (Ellipse) selectedFigure;
-					ellipse.getCenterPoint().x += diffX;
-					ellipse.getCenterPoint().y += diffY;
-				}
+			Point eventPoint = new Point(event.getX(), event.getY());
+	//		Point diffPoint = new Point(eventPoint.getX() - startPoint.getX(),
+	//				eventPoint.getY() - startPoint.getX());
+			if(selectionButton.isSelected() && selectedFigure != null) {
+				selectedFigure.move(eventPoint);
 				redrawCanvas();
 			}
 		}
@@ -266,7 +285,7 @@
 				redrawCanvas();
 			}
 		}
-		private void onFlipHButton( ActionEvent event){
+		private void onFlipHorizontalButtonCLick(ActionEvent event){
 			if( selectedFigure!= null ){
 				Figure flipFigure = null;
 
@@ -297,7 +316,7 @@
 
 			}
 		}
-		private void onFlipVButton( ActionEvent event){
+		private void onFlipVerticalButton(ActionEvent event){
 			if( selectedFigure!= null ){
 				Figure flipFigure = null;
 
@@ -360,69 +379,7 @@
 			}
 		}
 
-
-		public PaintPane(CanvasState canvasState, StatusPane statusPane) {
-			this.canvasState = canvasState;
-			this.statusPane = statusPane;
-			ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
-			for (ToggleButton tool : toolsArr) {
-				tool.setMinWidth(90);
-				tool.setToggleGroup(tools);
-				tool.setCursor(Cursor.HAND);
-			}
-
-			//Set left buttonsBox
-			VBox buttonsBox = new VBox(10);
-			VBox rightButtonsBox = new VBox(20);
-			Control[] additionalControls = {
-					bevelCheckbox,
-					formatText,
-					shadowTypeBox,
-					fillColorPicker,
-					fillSecondaryColorPicker,
-					copyFormatButton
-			};
-
-			rightButtonsBox.getChildren().addAll(turnButton, flipHButton, flipVButton,duplicateButton);
-
-			buttonsBox.getChildren().addAll(toolsArr);
-			buttonsBox.getChildren().addAll(additionalControls);
-			//setup choice box
-			shadowTypeBox.setValue(Shadow.NONE);
-			shadowTypeBox.getItems().addAll(Shadow.values());
-
-			buttonsBox.setPadding(new Insets(5));
-			buttonsBox.setStyle("-fx-background-color: #999");
-			buttonsBox.setPrefWidth(100);
-
-			rightButtonsBox.setPadding(new Insets(10));
-			rightButtonsBox.setStyle("-fx-background-color: #999");
-			rightButtonsBox.setPrefWidth(100);
-
-			gc.setLineWidth(1);
-
-			//setup event
-			shadowTypeBox.setOnAction(this::onChoiceBoxSelection);
-			canvas.setOnMousePressed(this::onMousePressed);
-			canvas.setOnMouseReleased(this::onMouseRelease);
-			canvas.setOnMouseMoved(this::onMouseMoved);
-			canvas.setOnMouseClicked(this::onMouseClicked);
-			canvas.setOnMouseDragged(this::onMouseDragged);
-			deleteButton.setOnAction(this::onDeleteButtonClick);
-			copyFormatButton.setOnAction(this::onCopyFormatButtonClick);
-			turnButton.setOnAction(this::onTurnButtonClick);
-			flipHButton.setOnAction(this:: onFlipHButton);
-			flipVButton.setOnAction(this:: onFlipVButton);
-			duplicateButton.setOnAction(this::onDuplicateButton);
-	
-			setLeft(buttonsBox);
-			//setRight(canvas);
-			setCenter(canvas);
-			setRight(rightButtonsBox);
-
-		}
-	
-		void redrawCanvas() {
+		private void redrawCanvas() {
 			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			for(Figure figure : canvasState.figures()) {
 				switch (figure) {
@@ -432,60 +389,24 @@
 				}
 			}
 		}
-
-		private RadialGradient radialGradientFromColorList(List<java.awt.Color> colors){
-			return new RadialGradient(0, 0, 0.5, 0.5, 0.5, true,
-					CycleMethod.NO_CYCLE,
-					createStopsFromColorList(colors));
-		}
-		private LinearGradient linearGradientFromColorList(List<java.awt.Color> colors) {
-			return new LinearGradient(0, 0, 1, 0, true,
-					CycleMethod.NO_CYCLE,
-					createStopsFromColorList(colors));
-		}
-
-		private List<Stop> createStopsFromColorList(List<java.awt.Color> list){
-			List<Stop> stops = new ArrayList<>();
-			for(java.awt.Color c : list){
-				double travelPercentage = (double)stops.size() / (list.size() - 1);
-				stops.add(new Stop(travelPercentage, awtColorToFxColor(c)));
-			}
-			return stops;
-		}
 		private List<java.awt.Color> colorListFromColorPickerArr(ColorPicker[] arr){
 			List<java.awt.Color> res = new ArrayList<>();
 			for(ColorPicker p : arr){
-				res.add(fxColorToAwtColor(p.getValue()));
+				res.add(ch.fxColorToAwtColor(p.getValue()));
 			}
 			return res;
 		}
-
-		private Color awtColorToFxColor(java.awt.Color c){
-			return new Color(
-					(double) c.getRed() / 255,
-					(double) c.getGreen() / 255,
-					(double)c.getBlue() / 255,
-					(double)c.getAlpha() / 255);
-		}
-		private java.awt.Color fxColorToAwtColor(Color c){
-			return new java.awt.Color(
-					(float)c.getRed(),
-					(float)c.getGreen(),
-					(float)c.getBlue(),
-					(float)c.getOpacity());
-		}
-
 		private void drawRadialFigure(RadialFigure figure){
 			if(figure.getShadeType() != Shadow.NONE){
-				gc.setFill(awtColorToFxColor(figure.getShadeType().getShadowColor(figure.getColors().getLast())));
+				gc.setFill(ch.awtColorToFxColor(figure.getShadeType().getShadowColor(figure.getColors().getLast())));
 				gc.fillOval(figure.getCenterPoint().getX() - figure.getWidth() / 2 + figure.getShadeType().getOffset(),
 						figure.getCenterPoint().getY() - figure.getHeight() / 2 + figure.getShadeType().getOffset(), figure.getWidth(), figure.getHeight());
 
 			}
-			if(figure.getBevel()){
+			if(figure.getHasBevel()){
 				drawRadialBevel(figure);
 			}
-			gc.setFill(radialGradientFromColorList(figure.getColors()));
+			gc.setFill(ch.radialGradientFromColorList(figure.getColors()));
 			gc.setStroke(figure == selectedFigure ? selectedLineColor : lineColor);
 			gc.strokeOval(figure.getCenterPoint().getX() - (figure.getWidth() / 2),  figure.getCenterPoint().getY() - (figure.getHeight() / 2), figure.getWidth(), figure.getHeight());
 			gc.fillOval(figure.getCenterPoint().getX() - (figure.getWidth() / 2), figure.getCenterPoint().getY() - (figure.getHeight() / 2), figure.getWidth(), figure.getHeight());
@@ -519,16 +440,16 @@
 
 		private void drawLinearFigure(LinearFigure figure){
 			if(figure.getShadeType() != Shadow.NONE) {
-				gc.setFill(awtColorToFxColor(figure.getShadeType().getShadowColor(figure.getColors().getLast())));
+				gc.setFill(ch.awtColorToFxColor(figure.getShadeType().getShadowColor(figure.getColors().getLast())));
 				gc.fillRect(figure.getTopLeft().getX() + figure.getShadeType().getOffset(),
 						figure.getTopLeft().getY() + figure.getShadeType().getOffset(),
 						Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()),
 						Math.abs(figure.getTopLeft().getY() - figure.getBottomRight().getY()));
 			}
-			if(figure.getBevel()) {
+			if(figure.getHasBevel()) {
 				drawLinearBevel(figure);
 			}
-			gc.setFill(linearGradientFromColorList(figure.getColors()));
+			gc.setFill(ch.linearGradientFromColorList(figure.getColors()));
 			gc.fillRect(figure.getTopLeft().getX(), figure.getTopLeft().getY(),
 					Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()), Math.abs(figure.getTopLeft().getY() - figure.getBottomRight().getY()));
 			gc.setStroke(figure == selectedFigure ? selectedLineColor : lineColor);
@@ -551,27 +472,4 @@
 			gc.setLineWidth(aux);
 		}
 
-		boolean figureBelongs(Figure figure, Point eventPoint) {
-			boolean found = false;
-			if(figure instanceof Rectangle) {
-				Rectangle rectangle = (Rectangle) figure;
-				found = eventPoint.getX() > rectangle.getTopLeft().getX() && eventPoint.getX() < rectangle.getBottomRight().getX() &&
-						eventPoint.getY() > rectangle.getTopLeft().getY() && eventPoint.getY() < rectangle.getBottomRight().getY();
-			} else if(figure instanceof Circle) {
-				Circle circle = (Circle) figure;
-				found = Math.sqrt(Math.pow(circle.getCenterPoint().getX() - eventPoint.getX(), 2) +
-						Math.pow(circle.getCenterPoint().getY() - eventPoint.getY(), 2)) < circle.getRadius();
-			} else if(figure instanceof Square) {
-				Square square = (Square) figure;
-				found = eventPoint.getX() > square.getTopLeft().getX() && eventPoint.getX() < square.getBottomRight().getX() &&
-						eventPoint.getY() > square.getTopLeft().getY() && eventPoint.getY() < square.getBottomRight().getY();
-			} else if(figure instanceof Ellipse) {
-				Ellipse ellipse = (Ellipse) figure;
-				// Nota: Fórmula aproximada. No es necesario corregirla.
-				found = ((Math.pow(eventPoint.getX() - ellipse.getCenterPoint().getX(), 2) / Math.pow(ellipse.getsMayorAxis(), 2)) +
-						(Math.pow(eventPoint.getY() - ellipse.getCenterPoint().getY(), 2) / Math.pow(ellipse.getsMinorAxis(), 2))) <= 0.30;
-			}
-			return found;
-		}
-	
 	}
