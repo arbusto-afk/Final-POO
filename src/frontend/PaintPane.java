@@ -14,7 +14,6 @@
 
 	import javafx.event.ActionEvent;
 	import javafx.scene.input.MouseEvent;
-	import jdk.jshell.spi.ExecutionControl;
 
 	import java.util.ArrayList;
 	import java.util.List;
@@ -198,7 +197,6 @@
 			}
 			else {
 				statusPane.updateStatus(strB.toString());
-
 			}
 		}
 		private void onMouseClicked(MouseEvent event){
@@ -237,8 +235,6 @@
 		}
 		private void onMouseDragged(MouseEvent event){
 			Point eventPoint = new Point(event.getX(), event.getY());
-	//		Point diffPoint = new Point(eventPoint.getX() - startPoint.getX(),
-	//				eventPoint.getY() - startPoint.getX());
 			if(selectionButton.isSelected() && selectedFigure != null) {
 				selectedFigure.move(eventPoint);
 				redrawCanvas();

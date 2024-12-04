@@ -17,11 +17,9 @@ public abstract class LinearFigure extends Figure{
 
     @Override
     public void move(Point newCenter){
-        Point topLeftOffset = getCenterPoint().getDifference(getTopLeft());
-        Point botRightOffset = getCenterPoint().getDifference(getBottomRight());
+        Point topLeftOffset = getTopLeft().getDifference(getCenterPoint());
+        Point botRightOffset = getBottomRight().getDifference(getCenterPoint());
         super.move(newCenter);
-        //System.out.println("Moving by diff " + diff);
-
         this.topLeft = newCenter.add(topLeftOffset);
         this.bottomRight = newCenter.add(botRightOffset);
     }

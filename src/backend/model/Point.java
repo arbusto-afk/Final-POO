@@ -17,10 +17,10 @@ public class Point {
         return y;
     }
 
-    public Point centerPointTo(Point p){
+    public Point centerPointTo(Point p) {
         return new Point(
-                this.getX() + ((this.getX() - p.getX()) / 2),
-                this.getY() + ((this.getY() - p.getY()) / 2)
+                (this.getX() + p.getX()) / 2,
+                (this.getY() + p.getY()) / 2
         );
     }
     public Point getDifference(Point p){
