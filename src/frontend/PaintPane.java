@@ -9,7 +9,6 @@
 	import javafx.scene.control.*;
 	import javafx.scene.layout.BorderPane;
 	import javafx.scene.layout.VBox;
-	import javafx.scene.shape.ArcType;
 	import javafx.scene.paint.*;
 
 	import javafx.event.ActionEvent;
@@ -27,8 +26,7 @@
 		Canvas canvas = new Canvas(800, 600);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		ColorHandler ch = new ColorHandler();
-		Color lineColor = Color.BLACK;
-		Color selectedLineColor = Color.RED;
+
 		Color defaultFillColor = Color.YELLOW;
 		Color defaultSecondaryFillColor = Color.ORANGE;
 	
@@ -61,6 +59,7 @@
 
 		// Dibujar una figura
 		Point startPoint;
+		Point selectionDragStartOffset;
 		// Seleccionar una figura
 		Figure selectedFigure;
 		Figure copiedFigure;
@@ -68,7 +67,7 @@
 		StatusPane statusPane;
 
 		ToggleGroup tools = new ToggleGroup();
-		final Integer bevelWidth = 7;
+		DrawGraphicContext drawingTool = new DrawGraphicContext(gc);
 
 		public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 			this.canvasState = canvasState;
@@ -110,11 +109,11 @@
 			leftButtonsBox.setStyle("-fx-background-color: #999");
 			leftButtonsBox.setPrefWidth(100);
 
-			rightButtonsBox.setPadding(new Insets(10));
+			rightButtonsBox.setPadding(new Insets(5));
 			rightButtonsBox.setStyle("-fx-background-color: #999");
 			rightButtonsBox.setPrefWidth(100);
 
-			gc.setLineWidth(1);
+			//	gc.setLineWidth(1);
 
 			//setup event
 			shadowTypeBox.setOnAction(this::onChoiceBoxSelection);
@@ -130,8 +129,8 @@
 			flipVerticalButton.setOnAction(this::onFlipVerticalButton);
 			duplicateButton.setOnAction(this::onDuplicateButton);
 
+
 			setLeft(leftButtonsBox);
-			//setRight(canvas);
 			setCenter(canvas);
 			setRight(rightButtonsBox);
 
@@ -140,6 +139,10 @@
 
 		private void onMousePressed(MouseEvent event){
 			startPoint = new Point(event.getX(), event.getY());
+			Point eventPoint = new Point(event.getX(), event.getY());
+			if(selectedFigure != null){
+				selectionDragStartOffset = selectedFigure.getCenterPoint().getDifference(eventPoint);
+			}
 		}
 		private void onMouseRelease(MouseEvent event) {
 			if (startPoint == null) {
@@ -184,10 +187,10 @@
 				canvasState.addFigure(newFigure);
 
 				startPoint = null;
+				selectionDragStartOffset = null;
 				redrawCanvas();
 			}
 		}
-
 		private void onMouseMoved(MouseEvent event) {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			StringBuilder strB = new StringBuilder();
@@ -238,7 +241,7 @@
 		private void onMouseDragged(MouseEvent event){
 			Point eventPoint = new Point(event.getX(), event.getY());
 			if(selectionButton.isSelected() && selectedFigure != null) {
-				selectedFigure.move(eventPoint);
+				selectedFigure.move(eventPoint.add(selectionDragStartOffset));
 				redrawCanvas();
 			}
 		}
@@ -255,12 +258,12 @@
 				redrawCanvas();
 			}
 		}
-
 		private void onCopyFormatButtonClick(ActionEvent event){
 			if(selectedFigure == null)
 				return;
 			copiedFigure = selectedFigure;
 		}
+
 		private void onTurnButtonClick(ActionEvent event){
 			if (selectedFigure != null) {
 				Figure rotatedFigure = null;
@@ -380,11 +383,7 @@
 		private void redrawCanvas() {
 			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			for(Figure figure : canvasState.figures()) {
-				switch (figure) {
-					case LinearFigure lf -> drawLinearFigure(lf);
-					case RadialFigure rf -> drawRadialFigure(rf);
-					default -> throw new RuntimeException("Unsupported figure");
-				}
+				drawingTool.drawFigure(figure, figure == selectedFigure);
 			}
 		}
 		private List<java.awt.Color> colorListFromColorPickerArr(ColorPicker[] arr){
@@ -394,80 +393,4 @@
 			}
 			return res;
 		}
-		private void drawRadialFigure(RadialFigure figure){
-			if(figure.getShadeType() != Shadow.NONE){
-				gc.setFill(ch.awtColorToFxColor(figure.getShadeType().getShadowColor(figure.getColors().getLast())));
-				gc.fillOval(figure.getCenterPoint().getX() - figure.getWidth() / 2 + figure.getShadeType().getOffset(),
-						figure.getCenterPoint().getY() - figure.getHeight() / 2 + figure.getShadeType().getOffset(), figure.getWidth(), figure.getHeight());
-
-			}
-			if(figure.getHasBevel()){
-				drawRadialBevel(figure);
-			}
-			gc.setFill(ch.radialGradientFromColorList(figure.getColors()));
-			gc.setStroke(figure == selectedFigure ? selectedLineColor : lineColor);
-			gc.strokeOval(figure.getCenterPoint().getX() - (figure.getWidth() / 2),  figure.getCenterPoint().getY() - (figure.getHeight() / 2), figure.getWidth(), figure.getHeight());
-			gc.fillOval(figure.getCenterPoint().getX() - (figure.getWidth() / 2), figure.getCenterPoint().getY() - (figure.getHeight() / 2), figure.getWidth(), figure.getHeight());
-
-		}
-		private void drawRadialBevel(RadialFigure figure){
-			gc.setStroke(Color.LIGHTGRAY);
-			double aux = gc.getLineWidth();
-			gc.setLineWidth(bevelWidth);
-			gc.strokeArc(
-					figure.getCenterPoint().getX() - (figure.getWidth() / 2),
-					figure.getCenterPoint().getY() - (figure.getHeight() / 2),
-					figure.getWidth(),
-					figure.getHeight(),
-					45,
-					180,
-					ArcType.OPEN
-			);
-			gc.setStroke(Color.BLACK);
-			gc.strokeArc(
-					figure.getCenterPoint().getX() - (figure.getWidth() / 2),
-					figure.getCenterPoint().getY() - (figure.getHeight() / 2),
-					figure.getWidth(),
-					figure.getHeight(),
-					225,
-					180,
-					ArcType.OPEN
-			);
-			gc.setLineWidth(aux);
-		}
-
-		private void drawLinearFigure(LinearFigure figure){
-			if(figure.getShadeType() != Shadow.NONE) {
-				gc.setFill(ch.awtColorToFxColor(figure.getShadeType().getShadowColor(figure.getColors().getLast())));
-				gc.fillRect(figure.getTopLeft().getX() + figure.getShadeType().getOffset(),
-						figure.getTopLeft().getY() + figure.getShadeType().getOffset(),
-						Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()),
-						Math.abs(figure.getTopLeft().getY() - figure.getBottomRight().getY()));
-			}
-			if(figure.getHasBevel()) {
-				drawLinearBevel(figure);
-			}
-			gc.setFill(ch.linearGradientFromColorList(figure.getColors()));
-			gc.fillRect(figure.getTopLeft().getX(), figure.getTopLeft().getY(),
-					Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()), Math.abs(figure.getTopLeft().getY() - figure.getBottomRight().getY()));
-			gc.setStroke(figure == selectedFigure ? selectedLineColor : lineColor);
-			gc.strokeRect(figure.getTopLeft().getX(), figure.getTopLeft().getY(),
-					Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()), Math.abs(figure.getTopLeft().getY() - figure.getBottomRight().getY()));
-		}
-		private void drawLinearBevel(LinearFigure figure){
-			double aux = gc.getLineWidth();
-			double x = figure.getTopLeft().getX();
-			double y = figure.getTopLeft().getY();
-			double width = Math.abs(x - figure.getBottomRight().getX());
-			double height = Math.abs(y - figure.getBottomRight().getY());
-			gc.setLineWidth(this.bevelWidth);
-			gc.setStroke(Color.LIGHTGRAY);
-			gc.strokeLine(x, y, x + width, y);
-			gc.strokeLine(x, y, x, y + height);
-			gc.setStroke(Color.BLACK);
-			gc.strokeLine(x + width, y, x + width, y + height);
-			gc.strokeLine(x, y + height, x + width, y + height);
-			gc.setLineWidth(aux);
-		}
-
 	}
