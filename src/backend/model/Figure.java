@@ -1,28 +1,40 @@
 package backend.model;
 
 
-
-import java.awt.Color;
 import java.util.List;
 
 public abstract class Figure {
-    private List<Color> colors;
-    protected static final int DIM = 3;
+    //private List<Color> colors;
+
+    private static final int DUPLICATEOFFSET = 15;
 
     private Point centerPoint;
+    private double width, height;
+
     private Shadow shadeType;
     private boolean hasBevel;
 
-    public Figure(List<Color> colors, Shadow shadeType, Point p){
-        this.colors = colors;
+    public Figure(Shadow shadeType, Point centerPoint, Double width, Double height,boolean hasBevel){
         this.shadeType = shadeType;
-        this.centerPoint = p;
-        this.hasBevel = false;
+        this.centerPoint = centerPoint;
+        this.hasBevel = hasBevel;
+        this.width = width;
+        this.height = height;
     }
     public Point getCenterPoint() { return centerPoint; }
 
-    public List<Color> getColors() { return this.colors; }
-    public void setColors(List<Color> l) { this.colors = l;}
+    public double getHeight() {
+        return height;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void resize(double width, double height){
+        this.width = width;
+        this.height = height;
+    }
 
     public boolean getHasBevel() { return hasBevel; }
     public void setHasBevel(boolean hasBevel) { this.hasBevel = hasBevel; }
@@ -30,21 +42,27 @@ public abstract class Figure {
     public Shadow getShadeType() { return shadeType; }
     public void setShadeType(Shadow shadeType) { this.shadeType = shadeType; }
 
+    public double getDuplicateOffset() { return DUPLICATEOFFSET; }
+
     public void move(Point newCenter){
         this.centerPoint = newCenter;
-      //  System.out.println("New center: " + this.centerPoint + "with newCenter: " + newCenter);
     }
+
     /*
         Returns whether a point belongs to the figure or not
      */
     public abstract boolean pointBelongs(Point p);
 
-    public abstract Figure turnRight();
-    public abstract Figure flipH();
-    public abstract Figure flipV();
+    public abstract void turnRight();
+
+    public void flipHorizontal(){
+        move(getCenterPoint().addX(width));
+    }
+    public void flipVertical(){
+         move(getCenterPoint().addY(height));
+    }
+
+  //  public abstract List<Figure> divide();
     public abstract Figure duplicate();
-
-
-
 }
 

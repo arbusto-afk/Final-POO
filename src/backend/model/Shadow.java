@@ -1,6 +1,5 @@
 package backend.model;
 
-import java.awt.*;
 public enum Shadow {
     NONE, SIMPLE, COLOR, INVERTED, INVERTEDCOLOR;
 
@@ -14,11 +13,4 @@ public enum Shadow {
         return -this.shadowOffset;
     }
 
-    public Color getShadowColor(Color c ) {
-        if (this.equals(NONE))
-            throw new RuntimeException("Attempting to access shade color of non-shaded shade");
-        if (this.equals(SIMPLE) || this.equals(INVERTED))
-            return Color.GRAY;
-        return c.darker();
-    }
 }

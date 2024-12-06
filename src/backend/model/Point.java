@@ -8,6 +8,10 @@ public class Point {
         this.x = x;
         this.y = y;
     }
+    public Point(double xy){
+        this.x = xy;
+        this.y = xy;
+    }
 
     public double getX() {
         return x;
@@ -29,6 +33,12 @@ public class Point {
                 this.getY() - p.getY()
         );
     }
+    public Point negate() {
+        return new Point(-x, -y);
+    }
+    public Point invert(){
+        return new Point(y, x);
+    }
 
     public Point add(Point p) {
         return new Point(
@@ -36,7 +46,33 @@ public class Point {
                 this.y + p.getY()
         );
     }
+    public Point add(double val) {
+        return new Point(this.x + val, this.y + val);
+    }
+    public Point add(double x, double y) {
+        return new Point(this.x + x, this.y + y);
+    }
+    public Point addX(double x) {
+        return new Point(this.x + x, this.y );
+    }
+    public Point addY(double y) {
+        return new Point(this.x + x, this.y);
+    }
 
+    public Point substract(Point p){
+        return new Point(x - p.x, y - p.y);
+    }
+
+    public Point substractX(double x){
+        return new Point(this.x - x, y);
+    }
+
+    public Point substractY(double y){
+        return new Point(x , this.y - y);
+    }
+    public Point substract(double x, double y){
+        return new Point(this.x - x, this.y - y);
+    }
         @Override
     public String toString() {
         return String.format("{%.2f , %.2f}", x, y);

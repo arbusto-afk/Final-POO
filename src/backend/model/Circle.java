@@ -2,32 +2,26 @@ package backend.model;
 
 import java.util.List;
 import java.awt.*;
-public class Circle extends RadialFigure {
+public class Circle extends Ellipse {
 
-
-    protected final double radius;
-
-    public Circle(Point centerPoint, double radius, List<Color> colors, Shadow shadeType) {
-        super(centerPoint, radius * 2, radius * 2, colors, shadeType);
-        this.radius = radius;
+    public Circle(Point centerPoint, double radius, Shadow shadeType, boolean hasBevel) {
+        super(centerPoint, radius * 2, radius * 2, shadeType, hasBevel);
     }
 
     @Override
     public String toString() {
-        return String.format("Círculo [Centro: %s, Radio: %.2f]", this.getCenterPoint(), radius);
+        return String.format("Círculo [Centro: %s, Radio: %.2f]", this.getCenterPoint(), getWidth() / 2);
     }
     @Override
     public boolean pointBelongs(Point p){
         return  Math.sqrt(Math.pow(this.getCenterPoint().getX() - p.getX(), 2) +
                 Math.pow(this.getCenterPoint().getY() - p.getY(), 2)) < this.getRadius();
-
     }
-
 
     public double getRadius() {
-        return radius;
+        return getWidth() / 2;
     }
-
+/*
     @Override
     public Figure flipH(){
         Point newCenter = getCenterH(getCenterPoint(), getRadius());
@@ -38,13 +32,12 @@ public class Circle extends RadialFigure {
         Point newCenter = getCenterV(getCenterPoint(), getRadius());
         return new Circle(newCenter, getRadius(), getColors(), getShadeType());
     }
-    public Figure duplicate(){
-        Point newCenter = new Point(getCenterPoint().getX()+DIM,getCenterPoint().getY()+DIM );
-        return new Circle(newCenter,getRadius(), getColors(), getShadeType() );
+
+ */
+    public Circle duplicate(){
+        return new Circle(getCenterPoint().add(getDuplicateOffset()),getRadius(), getShadeType(), getHasBevel() );
     }
 
-    @Override
-    public Figure turnRight() {
-        return null;
-    }
+
 }
+

@@ -3,11 +3,13 @@
 	import backend.CanvasState;
 	import backend.model.*;
 	import javafx.geometry.Insets;
+	import javafx.geometry.Pos;
 	import javafx.scene.Cursor;
 	import javafx.scene.canvas.Canvas;
 	import javafx.scene.canvas.GraphicsContext;
 	import javafx.scene.control.*;
 	import javafx.scene.layout.BorderPane;
+	import javafx.scene.layout.HBox;
 	import javafx.scene.layout.VBox;
 	import javafx.scene.paint.*;
 
@@ -25,7 +27,6 @@
 		// Canvas y relacionados
 		Canvas canvas = new Canvas(800, 600);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		ColorHandler ch = new ColorHandler();
 
 		Color defaultFillColor = Color.YELLOW;
 		Color defaultSecondaryFillColor = Color.ORANGE;
@@ -56,7 +57,17 @@
 		Button flipHorizontalButton = new Button("Voltear H");
 		Button flipVerticalButton = new Button("Voltear v");
 		Button duplicateButton = new Button("Duplicar");
+		Button divideButton = new Button("Dividir");
 
+
+		Button pushForwardButton = new Button ("Traer al frente");
+		Button pushToBottomButton = new Button ("Enviar al fondo");
+		Label layerLabel = new Label("Capas");
+		ChoiceBox<String> layersChoiceBox = new ChoiceBox<>();
+		RadioButton showLayerRadioButton = new RadioButton("Mostrar");
+		RadioButton hideLayerRadioButton = new RadioButton("Ocultar");
+		Button addLayerButton = new Button("Agregar capa");
+		Button removeLayerButton = new Button("Eliminar capa");
 		// Dibujar una figura
 		Point startPoint;
 		Point selectionDragStartOffset;
@@ -82,6 +93,7 @@
 			//Set left leftButtonsBox
 			VBox leftButtonsBox = new VBox(10);
 			VBox rightButtonsBox = new VBox(10);
+			HBox topButtonsBox = new HBox(10);
 			Control[] leftControls = {
 					bevelCheckbox,
 					formatLabel,
@@ -95,15 +107,33 @@
 					turnButton,
 					flipHorizontalButton,
 					flipVerticalButton,
-					duplicateButton
+					duplicateButton,
+					divideButton,
 			};
 
+			Control[] topControls = {
+					pushForwardButton,
+					pushToBottomButton,
+					layerLabel,
+					layersChoiceBox,
+					showLayerRadioButton,
+					hideLayerRadioButton,
+					addLayerButton,
+					removeLayerButton
+			};
+
+			topButtonsBox.getChildren().addAll(topControls);
 			rightButtonsBox.getChildren().addAll(rightControls);
 			leftButtonsBox.getChildren().addAll(toolsArr);
 			leftButtonsBox.getChildren().addAll(leftControls);
 			//setup choice box
 			shadowTypeBox.setValue(Shadow.NONE);
 			shadowTypeBox.getItems().addAll(Shadow.values());
+
+			topButtonsBox.setPadding(new Insets(5));
+			topButtonsBox.setStyle("-fx-background-color: #999");
+			topButtonsBox.setPrefWidth(100);
+			topButtonsBox.setAlignment(Pos.CENTER);
 
 			leftButtonsBox.setPadding(new Insets(5));
 			leftButtonsBox.setStyle("-fx-background-color: #999");
@@ -112,8 +142,6 @@
 			rightButtonsBox.setPadding(new Insets(5));
 			rightButtonsBox.setStyle("-fx-background-color: #999");
 			rightButtonsBox.setPrefWidth(100);
-
-			//	gc.setLineWidth(1);
 
 			//setup event
 			shadowTypeBox.setOnAction(this::onChoiceBoxSelection);
@@ -128,12 +156,12 @@
 			flipHorizontalButton.setOnAction(this::onFlipHorizontalButtonCLick);
 			flipVerticalButton.setOnAction(this::onFlipVerticalButton);
 			duplicateButton.setOnAction(this::onDuplicateButton);
-
+			divideButton.setOnAction(this::onDivideButtonClick);
 
 			setLeft(leftButtonsBox);
+			setTop(topButtonsBox);
 			setCenter(canvas);
 			setRight(rightButtonsBox);
-
 		}
 
 
@@ -155,26 +183,27 @@
 			Figure newFigure;
 				ToggleButton b = (ToggleButton) (tools.getSelectedToggle());
 				if (b != null) {
-					List<java.awt.Color> colors = colorListFromColorPickerArr(colorPickers);
+					List<Color> colors = colorListFromColorPickerArr(colorPickers);
 					Shadow shadowType = shadowTypeBox.getValue();
+                    boolean hasBevel = this.bevelCheckbox.isSelected();
 					switch (b.getText()) {
 						case squareText:
 							double size = Math.abs(endPoint.getX() - startPoint.getX());
-							newFigure = new Square(startPoint, size, colors, shadowType);
+							newFigure = new Square(startPoint, size, shadowType, hasBevel);
 							break;
 						case rectangleText: {
-							newFigure = new Rectangle(startPoint, endPoint, colors, shadowType);
+							newFigure = new Rectangle(startPoint, endPoint, shadowType, hasBevel);
 							break;
 						}
 						case circleText:
 							double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-							newFigure = new Circle(startPoint, circleRadius, colors, shadowType);
+							newFigure = new Circle(startPoint, circleRadius, shadowType, hasBevel);
 							break;
 						case ellipseText: {
 							Point centerPoint = new Point(Math.abs(endPoint.x + startPoint.x) / 2, (Math.abs((endPoint.y + startPoint.y)) / 2));
 							double sMayorAxis = Math.abs(endPoint.x - startPoint.x);
 							double sMinorAxis = Math.abs(endPoint.y - startPoint.y);
-							newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis, colors, shadowType);
+							newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis, shadowType, hasBevel);
 							break;
 						}
 						default: {
@@ -231,7 +260,7 @@
 				if (figureToPasteFormatOnto != null) {
 					figureToPasteFormatOnto.setShadeType(copiedFigure.getShadeType());
 					figureToPasteFormatOnto.setHasBevel(copiedFigure.getHasBevel());
-					figureToPasteFormatOnto.setColors(copiedFigure.getColors());
+				//	figureToPasteFormatOnto.setColors(copiedFigure.getColors());
 					redrawCanvas();
 
 				}
@@ -266,130 +295,46 @@
 
 		private void onTurnButtonClick(ActionEvent event){
 			if (selectedFigure != null) {
-				Figure rotatedFigure = null;
-
-				if(selectedFigure instanceof Rectangle) {
-					Rectangle rectangle = (Rectangle) selectedFigure;
-					rotatedFigure = (Rectangle) selectedFigure.turnRight();
-				}
-				if(selectedFigure instanceof Ellipse){
-					Ellipse ellipse = (Ellipse) selectedFigure;
-					rotatedFigure= (Ellipse) selectedFigure.turnRight();
-				}
-				if (rotatedFigure != null) {
-					canvasState.addFigure(rotatedFigure);
-					// Opcional: Eliminar la figura original
-					//canvasState.deleteFigure(selectedFigure);
-					selectedFigure = rotatedFigure;
-					redrawCanvas();
-				}
+				selectedFigure.turnRight();
 				redrawCanvas();
 			}
 		}
-		private void onFlipHorizontalButtonCLick(ActionEvent event){
-			if( selectedFigure!= null ){
-				Figure flipFigure = null;
-
-				if(selectedFigure instanceof Circle) {
-					Circle circle = (Circle) selectedFigure;
-					flipFigure = (Circle) selectedFigure.flipH();
-				}
-				if(selectedFigure instanceof Ellipse) {
-					Ellipse ellipse = (Ellipse) selectedFigure;
-					flipFigure = (Ellipse) selectedFigure.flipH();
-				}
-				if(selectedFigure instanceof Rectangle) {
-					Rectangle rectangle = (Rectangle) selectedFigure;
-					flipFigure = (Rectangle) selectedFigure.flipH();
-				}
-				if(selectedFigure instanceof Square) {
-					Square square = (Square) selectedFigure;
-					flipFigure = (Square) selectedFigure.flipH();
-				}
-
-				if (flipFigure != null) {
-					canvasState.addFigure(flipFigure);
-					// Opcional: Eliminar la figura original
-					//canvasState.deleteFigure(selectedFigure);
-					selectedFigure = flipFigure;
-					redrawCanvas();
-				}
-
-			}
+	private void onFlipHorizontalButtonCLick(ActionEvent event) {
+		if (selectedFigure != null) {
+			selectedFigure.flipHorizontal();
+			redrawCanvas();
 		}
-		private void onFlipVerticalButton(ActionEvent event){
-			if( selectedFigure!= null ){
-				Figure flipFigure = null;
+	}
 
-				if(selectedFigure instanceof Circle) {
-					Circle circle = (Circle) selectedFigure;
-					flipFigure = (Circle) selectedFigure.flipV();
-				}
-				if(selectedFigure instanceof Ellipse) {
-					Ellipse ellipse = (Ellipse) selectedFigure;
-					flipFigure = (Ellipse) selectedFigure.flipV();
-				}
-				if(selectedFigure instanceof Rectangle) {
-					Rectangle rectangle = (Rectangle) selectedFigure;
-					flipFigure = (Rectangle) selectedFigure.flipV();
-				}
-				if(selectedFigure instanceof Square) {
-					Square square = (Square) selectedFigure;
-					flipFigure = (Square) selectedFigure.flipV();
-				}
-
-				if (flipFigure != null) {
-					canvasState.addFigure(flipFigure);
-					// Opcional: Eliminar la figura original
-					//canvasState.deleteFigure(selectedFigure);
-					selectedFigure = flipFigure;
-					redrawCanvas();
-				}
-
+		private void onFlipVerticalButton(ActionEvent event) {
+			if (selectedFigure != null) {
+				selectedFigure.flipVertical();
+				redrawCanvas();
 			}
 		}
 		private void onDuplicateButton( ActionEvent event){
-			if( selectedFigure!= null ){
-				Figure duplicateFigure = null;
-
-				if(selectedFigure instanceof Circle) {
-					Circle circle = (Circle) selectedFigure;
-					duplicateFigure = (Circle) selectedFigure.duplicate();
-				}
-				if(selectedFigure instanceof Ellipse) {
-					Ellipse ellipse = (Ellipse) selectedFigure;
-					duplicateFigure = (Ellipse) selectedFigure.duplicate();
-				}
-				if(selectedFigure instanceof Rectangle) {
-					Rectangle rectangle = (Rectangle) selectedFigure;
-					duplicateFigure = (Rectangle) selectedFigure.duplicate();
-				}
-				if(selectedFigure instanceof Square) {
-					Square square = (Square) selectedFigure;
-					duplicateFigure = (Square) selectedFigure.duplicate();
-				}
-
-				if (duplicateFigure != null) {
-					canvasState.addFigure(duplicateFigure);
-					// Opcional: Eliminar la figura original
-					//canvasState.deleteFigure(selectedFigure);
-					selectedFigure = duplicateFigure;
-					redrawCanvas();
-				}
-
+			if( selectedFigure!= null ) {
+				canvasState.addFigure(selectedFigure.duplicate());
+				redrawCanvas();
 			}
+		}
+		private void onDivideButtonClick(ActionEvent event){
+			if(selectedFigure == null)
+				return;
+			canvasState.divideFigure(selectedFigure);
+			redrawCanvas();
 		}
 
 		private void redrawCanvas() {
 			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			for(Figure figure : canvasState.figures()) {
-				drawingTool.drawFigure(figure, figure == selectedFigure);
+				drawingTool.drawFigure(figure, figure == selectedFigure, List.of(Color.PURPLE));
 			}
 		}
-		private List<java.awt.Color> colorListFromColorPickerArr(ColorPicker[] arr){
-			List<java.awt.Color> res = new ArrayList<>();
+		private List<Color> colorListFromColorPickerArr(ColorPicker[] arr){
+			List<Color> res = new ArrayList<>();
 			for(ColorPicker p : arr){
-				res.add(ch.fxColorToAwtColor(p.getValue()));
+				res.add(p.getValue());
 			}
 			return res;
 		}

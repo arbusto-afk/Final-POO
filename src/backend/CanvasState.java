@@ -18,6 +18,18 @@ public class CanvasState {
         list.remove(figure);
     }
 
+    public void divideFigure(Figure figure){
+        if(!list.contains(figure))
+            throw new RuntimeException("Attempting to divide nonexistent figure");
+        //list.remove(figure);
+        figure.move(figure.getCenterPoint().substractX(figure.getWidth() / 4));
+        figure.resize(figure.getWidth() / 2, figure.getHeight() / 2);
+        Figure dupl = figure.duplicate();
+        dupl.move(figure.getCenterPoint().addX(figure.getWidth()));
+        list.add(dupl);
+     //   list.add(figure);
+    }
+
     public Iterable<Figure> figures() {
         return new ArrayList<>(list);
     }
