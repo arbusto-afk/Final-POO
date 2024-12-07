@@ -3,7 +3,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.stage.Stage;
 
-public class TestApp extends Application {
+public class
+TestApp extends Application {
     @Override
     public void start(Stage stage) {
         ChoiceBox<String> test1 = new ChoiceBox<>();

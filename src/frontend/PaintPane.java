@@ -32,10 +32,10 @@
 		Color defaultSecondaryFillColor = Color.ORANGE;
 	
 		// Botones Barra Izquierda
-		final String rectangleText = "Rectángulo";
-		final String squareText = "Cuadrado";
-		final String circleText = "Círculo";
-		final String ellipseText = "Elipse";
+		static final String rectangleText = "Rectángulo";
+		static final String squareText = "Cuadrado";
+		static final String circleText = "Círculo";
+		static final String ellipseText = "Elipse";
 		ToggleButton selectionButton = new ToggleButton("Seleccionar");
 		ToggleButton rectangleButton = new ToggleButton(rectangleText);
 		ToggleButton circleButton = new ToggleButton(circleText);
@@ -64,8 +64,10 @@
 		Button pushToBottomButton = new Button ("Enviar al fondo");
 		Label layerLabel = new Label("Capas");
 		ChoiceBox<String> layersChoiceBox = new ChoiceBox<>();
+
 		RadioButton showLayerRadioButton = new RadioButton("Mostrar");
 		RadioButton hideLayerRadioButton = new RadioButton("Ocultar");
+		ToggleGroup showHideToggle = new ToggleGroup();	// Para que solo se pueda seleccionar uno
 		Button addLayerButton = new Button("Agregar capa");
 		Button removeLayerButton = new Button("Eliminar capa");
 		// Dibujar una figura
@@ -80,7 +82,11 @@
 		ToggleGroup tools = new ToggleGroup();
 		DrawGraphicContext drawingTool = new DrawGraphicContext(gc);
 
+		private PaintPaneEvents paintPaneEvents;
+
+
 		public PaintPane(CanvasState canvasState, StatusPane statusPane) {
+			paintPaneEvents = new PaintPaneEvents(this);
 			this.canvasState = canvasState;
 			this.statusPane = statusPane;
 			ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
@@ -144,198 +150,33 @@
 			rightButtonsBox.setPrefWidth(100);
 
 			//setup event
-			shadowTypeBox.setOnAction(this::onChoiceBoxSelection);
-			canvas.setOnMousePressed(this::onMousePressed);
-			canvas.setOnMouseReleased(this::onMouseRelease);
-			canvas.setOnMouseMoved(this::onMouseMoved);
-			canvas.setOnMouseClicked(this::onMouseClicked);
-			canvas.setOnMouseDragged(this::onMouseDragged);
-			deleteButton.setOnAction(this::onDeleteButtonClick);
-			copyFormatButton.setOnAction(this::onCopyFormatButtonClick);
-			turnButton.setOnAction(this::onTurnButtonClick);
-			flipHorizontalButton.setOnAction(this::onFlipHorizontalButtonCLick);
-			flipVerticalButton.setOnAction(this::onFlipVerticalButton);
-			duplicateButton.setOnAction(this::onDuplicateButton);
-			divideButton.setOnAction(this::onDivideButtonClick);
+			shadowTypeBox.setOnAction(paintPaneEvents::onChoiceBoxSelection);
+			canvas.setOnMousePressed(paintPaneEvents::onMousePressed);
+			canvas.setOnMouseReleased(paintPaneEvents::onMouseRelease);
+			canvas.setOnMouseMoved(paintPaneEvents::onMouseMoved);
+			canvas.setOnMouseClicked(paintPaneEvents::onMouseClicked);
+			canvas.setOnMouseDragged(paintPaneEvents::onMouseDragged);
+			deleteButton.setOnAction(paintPaneEvents::onDeleteButtonClick);
+			copyFormatButton.setOnAction(paintPaneEvents::onCopyFormatButtonClick);
+			turnButton.setOnAction(paintPaneEvents::onTurnButtonClick);
+			flipHorizontalButton.setOnAction(paintPaneEvents::onFlipHorizontalButtonCLick);
+			flipVerticalButton.setOnAction(paintPaneEvents::onFlipVerticalButton);
+			duplicateButton.setOnAction(paintPaneEvents::onDuplicateButton);
+			divideButton.setOnAction(paintPaneEvents::onDivideButtonClick);
 
 			setLeft(leftButtonsBox);
 			setTop(topButtonsBox);
 			setCenter(canvas);
 			setRight(rightButtonsBox);
+
+			showLayerRadioButton.setToggleGroup(showHideToggle);
+			hideLayerRadioButton.setToggleGroup(showHideToggle);
 		}
 
-
-		private void onMousePressed(MouseEvent event){
-			startPoint = new Point(event.getX(), event.getY());
-			Point eventPoint = new Point(event.getX(), event.getY());
-			if(selectedFigure != null){
-				selectionDragStartOffset = selectedFigure.getCenterPoint().getDifference(eventPoint);
-			}
-		}
-		private void onMouseRelease(MouseEvent event) {
-			if (startPoint == null) {
-				return;
-			}
-			Point endPoint = new Point(event.getX(), event.getY());
-			if (endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
-				return;
-			}
-			Figure newFigure;
-				ToggleButton b = (ToggleButton) (tools.getSelectedToggle());
-				if (b != null) {
-					List<Color> colors = colorListFromColorPickerArr(colorPickers);
-					Shadow shadowType = shadowTypeBox.getValue();
-                    boolean hasBevel = this.bevelCheckbox.isSelected();
-					switch (b.getText()) {
-						case squareText:
-							double size = Math.abs(endPoint.getX() - startPoint.getX());
-							newFigure = new Square(startPoint, size, shadowType, hasBevel);
-							break;
-						case rectangleText: {
-							newFigure = new Rectangle(startPoint, endPoint, shadowType, hasBevel);
-							break;
-						}
-						case circleText:
-							double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-							newFigure = new Circle(startPoint, circleRadius, shadowType, hasBevel);
-							break;
-						case ellipseText: {
-							Point centerPoint = new Point(Math.abs(endPoint.x + startPoint.x) / 2, (Math.abs((endPoint.y + startPoint.y)) / 2));
-							double sMayorAxis = Math.abs(endPoint.x - startPoint.x);
-							double sMinorAxis = Math.abs(endPoint.y - startPoint.y);
-							newFigure = new Ellipse(centerPoint, sMayorAxis, sMinorAxis, shadowType, hasBevel);
-							break;
-						}
-						default: {
-							return;
-						}
-					}
-
-
-				newFigure.setHasBevel(bevelCheckbox.isSelected());
-				canvasState.addFigure(newFigure);
-
-				startPoint = null;
-				selectionDragStartOffset = null;
-				redrawCanvas();
-			}
-		}
-		private void onMouseMoved(MouseEvent event) {
-			Point eventPoint = new Point(event.getX(), event.getY());
-			StringBuilder strB = new StringBuilder();
-			for(Figure fig : canvasState.	figuresAtPoint(eventPoint)){
-				strB.append(fig.toString());
-			}
-			if (strB.isEmpty()) {
-				statusPane.updateStatus(eventPoint.toString());
-			}
-			else {
-				statusPane.updateStatus(strB.toString());
-			}
-		}
-		private void onMouseClicked(MouseEvent event){
-			Point eventPoint = new Point(event.getX(), event.getY());
-			if(selectionButton.isSelected()) {
-				boolean found = false;
-				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				for (Figure fig : canvasState.figuresAtPoint(eventPoint)) {
-					label.append(fig.toString());
-					selectedFigure = fig;
-					found = true;
-				}
-				if (found) {
-					statusPane.updateStatus(label.toString());
-				} else {
-					statusPane.updateStatus("Ninguna figura encontrada");
-					selectedFigure = null;
-				}
-				redrawCanvas();
-			}
-			if(copiedFigure != null) {
-				Figure figureToPasteFormatOnto = null;
-				for (Figure figure : canvasState.figuresAtPoint(eventPoint)) {
-					figureToPasteFormatOnto = figure;
-					break;
-				}
-				if (figureToPasteFormatOnto != null) {
-					figureToPasteFormatOnto.setShadeType(copiedFigure.getShadeType());
-					figureToPasteFormatOnto.setHasBevel(copiedFigure.getHasBevel());
-				//	figureToPasteFormatOnto.setColors(copiedFigure.getColors());
-					redrawCanvas();
-
-				}
-				copiedFigure = null;
-			}
-		}
-		private void onMouseDragged(MouseEvent event){
-			Point eventPoint = new Point(event.getX(), event.getY());
-			if(selectionButton.isSelected() && selectedFigure != null) {
-				selectedFigure.move(eventPoint.add(selectionDragStartOffset));
-				redrawCanvas();
-			}
-		}
-		private void onChoiceBoxSelection(ActionEvent event){
-			if(selectedFigure != null){
-				selectedFigure.setShadeType(shadowTypeBox.getValue());
-				redrawCanvas();
-			}
-		}
-		private void onDeleteButtonClick(ActionEvent event){
-			if (selectedFigure != null) {
-				canvasState.deleteFigure(selectedFigure);
-				selectedFigure = null;
-				redrawCanvas();
-			}
-		}
-		private void onCopyFormatButtonClick(ActionEvent event){
-			if(selectedFigure == null)
-				return;
-			copiedFigure = selectedFigure;
-		}
-
-		private void onTurnButtonClick(ActionEvent event){
-			if (selectedFigure != null) {
-				selectedFigure.turnRight();
-				redrawCanvas();
-			}
-		}
-	private void onFlipHorizontalButtonCLick(ActionEvent event) {
-		if (selectedFigure != null) {
-			selectedFigure.flipHorizontal();
-			redrawCanvas();
-		}
-	}
-
-		private void onFlipVerticalButton(ActionEvent event) {
-			if (selectedFigure != null) {
-				selectedFigure.flipVertical();
-				redrawCanvas();
-			}
-		}
-		private void onDuplicateButton( ActionEvent event){
-			if( selectedFigure!= null ) {
-				canvasState.addFigure(selectedFigure.duplicate());
-				redrawCanvas();
-			}
-		}
-		private void onDivideButtonClick(ActionEvent event){
-			if(selectedFigure == null)
-				return;
-			canvasState.divideFigure(selectedFigure);
-			redrawCanvas();
-		}
-
-		private void redrawCanvas() {
+		public void redrawCanvas() {
 			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			for(Figure figure : canvasState.figures()) {
 				drawingTool.drawFigure(figure, figure == selectedFigure, List.of(Color.PURPLE));
 			}
-		}
-		private List<Color> colorListFromColorPickerArr(ColorPicker[] arr){
-			List<Color> res = new ArrayList<>();
-			for(ColorPicker p : arr){
-				res.add(p.getValue());
-			}
-			return res;
 		}
 	}
