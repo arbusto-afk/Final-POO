@@ -45,11 +45,13 @@
 		Label formatLabel = new Label("Formato:");
 		ChoiceBox<Shadow> shadowTypeBox = new ChoiceBox<>();
 		CheckBox bevelCheckbox = new CheckBox("Biselado");
+
 		// Selector de color de relleno
 		ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
 		ColorPicker fillSecondaryColorPicker = new ColorPicker(defaultSecondaryFillColor);
 		//calculate shape gradient only from these color Picker
 		final ColorPicker[] colorPickers = {fillColorPicker, fillSecondaryColorPicker};
+
 		//Barra lateral derecha
 		Button copyFormatButton = new Button("Copiar formato");
 		Label actionLabel = new Label("Acciones");
@@ -59,17 +61,17 @@
 		Button duplicateButton = new Button("Duplicar");
 		Button divideButton = new Button("Dividir");
 
-
+		//Barra superior
 		Button pushForwardButton = new Button ("Traer al frente");
 		Button pushToBottomButton = new Button ("Enviar al fondo");
 		Label layerLabel = new Label("Capas");
 		ChoiceBox<String> layersChoiceBox = new ChoiceBox<>();
-
 		RadioButton showLayerRadioButton = new RadioButton("Mostrar");
 		RadioButton hideLayerRadioButton = new RadioButton("Ocultar");
 		ToggleGroup showHideToggle = new ToggleGroup();	// Para que solo se pueda seleccionar uno
 		Button addLayerButton = new Button("Agregar capa");
 		Button removeLayerButton = new Button("Eliminar capa");
+
 		// Dibujar una figura
 		Point startPoint;
 		Point selectionDragStartOffset;
@@ -176,7 +178,7 @@
 		public void redrawCanvas() {
 			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			for(Figure figure : canvasState.figures()) {
-				drawingTool.drawFigure(figure, figure == selectedFigure, List.of(Color.PURPLE));
+				drawingTool.drawFigure(figure, figure == selectedFigure, List.of(Color.YELLOW));
 			}
 		}
 	}

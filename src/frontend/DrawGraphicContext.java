@@ -28,7 +28,7 @@ public class DrawGraphicContext {
 
     public void drawFigure(Figure fig, boolean isSelected, List<Color> colors){
         switch(fig){
-            case Ellipse rf -> { drawRadialFigure( rf, isSelected, colors);}
+            case Ellipse rf -> { drawRadialFigure( rf, isSelected, colors); }
             case Rectangle lf -> { drawLinearFigure(lf, isSelected, colors);}
             default -> { throw new RuntimeException("Unssuported figure");}
         }
