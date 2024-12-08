@@ -21,19 +21,7 @@ public class Circle extends Ellipse {
     public double getRadius() {
         return getWidth() / 2;
     }
-/*
-    @Override
-    public Figure flipH(){
-        Point newCenter = getCenterH(getCenterPoint(), getRadius());
-        return new Circle(newCenter, getRadius(), getColors(), getShadeType());
-    }
-    @Override
-    public Figure flipV(){
-        Point newCenter = getCenterV(getCenterPoint(), getRadius());
-        return new Circle(newCenter, getRadius(), getColors(), getShadeType());
-    }
 
- */
     public Circle duplicate(){
         return new Circle(getCenterPoint().add(getDuplicateOffset()),getRadius(), getShadeType(), getHasBevel() );
     }

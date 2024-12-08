@@ -19,18 +19,8 @@ public class Ellipse extends Figure {
     public void turnRight() {
         resize(getHeight(), getWidth());
     }
- /*   @Override
-    public Figure flipH(){
-        Point newCenter = getCenterPoint();
-        return new Ellipse(newCenter, this.getsMayorAxis() ,this.getsMinorAxis(), getShadeType(), this.getHasBevel());
-    }
-    public Figure flipV(){
-        Point newCenter = getCenterPoint();
-        return new Ellipse(newCenter, this.getsMayorAxis(), this.getsMinorAxis(), getShadeType(), this.getHasBevel());
-    }
-    */public Ellipse duplicate(){
+ public Ellipse duplicate(){
             return new Ellipse(getCenterPoint().add(getDuplicateOffset()), getWidth(), getHeight(), getShadeType(), getHasBevel());
         }
-
 
 }

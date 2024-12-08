@@ -84,11 +84,9 @@
 		ToggleGroup tools = new ToggleGroup();
 		DrawGraphicContext drawingTool = new DrawGraphicContext(gc);
 
-		private PaintPaneEvents paintPaneEvents;
 
-
-		public PaintPane(CanvasState canvasState, StatusPane statusPane) {
-			paintPaneEvents = new PaintPaneEvents(this);
+        public PaintPane(CanvasState canvasState, StatusPane statusPane) {
+            PaintPaneEvents paintPaneEvents = new PaintPaneEvents(this);
 			this.canvasState = canvasState;
 			this.statusPane = statusPane;
 			ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
