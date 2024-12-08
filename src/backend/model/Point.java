@@ -56,7 +56,7 @@ public class Point {
         return new Point(this.x + x, this.y );
     }
     public Point addY(double y) {
-        return new Point(this.x + x, this.y);
+        return new Point(this.x , this.y+y);
     }
 
     public Point substract(Point p){
