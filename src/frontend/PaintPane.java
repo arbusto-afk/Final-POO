@@ -19,6 +19,8 @@
 	import java.util.ArrayList;
 	import java.util.List;
 
+	import static frontend.compInitializer.initializePaintPane;
+
 	public class PaintPane extends BorderPane {
 	
 		// BackEnd
@@ -86,91 +88,9 @@
 
 
         public PaintPane(CanvasState canvasState, StatusPane statusPane) {
-            PaintPaneEvents paintPaneEvents = new PaintPaneEvents(this);
 			this.canvasState = canvasState;
 			this.statusPane = statusPane;
-			ToggleButton[] toolsArr = {selectionButton, rectangleButton, circleButton, squareButton, ellipseButton, deleteButton};
-			for (ToggleButton tool : toolsArr) {
-				tool.setMinWidth(90);
-				tool.setToggleGroup(tools);
-				tool.setCursor(Cursor.HAND);
-			}
-
-			//Set left leftButtonsBox
-			VBox leftButtonsBox = new VBox(10);
-			VBox rightButtonsBox = new VBox(10);
-			HBox topButtonsBox = new HBox(10);
-			Control[] leftControls = {
-					bevelCheckbox,
-					formatLabel,
-					shadowTypeBox,
-					fillColorPicker,
-					fillSecondaryColorPicker,
-					copyFormatButton
-			};
-			Control[] rightControls = {
-					actionLabel,
-					turnButton,
-					flipHorizontalButton,
-					flipVerticalButton,
-					duplicateButton,
-					divideButton,
-			};
-
-			Control[] topControls = {
-					pushForwardButton,
-					pushToBottomButton,
-					layerLabel,
-					layersChoiceBox,
-					showLayerRadioButton,
-					hideLayerRadioButton,
-					addLayerButton,
-					removeLayerButton
-			};
-
-			topButtonsBox.getChildren().addAll(topControls);
-			rightButtonsBox.getChildren().addAll(rightControls);
-			leftButtonsBox.getChildren().addAll(toolsArr);
-			leftButtonsBox.getChildren().addAll(leftControls);
-			//setup choice box
-			shadowTypeBox.setValue(Shadow.NONE);
-			shadowTypeBox.getItems().addAll(Shadow.values());
-
-			topButtonsBox.setPadding(new Insets(5));
-			topButtonsBox.setStyle("-fx-background-color: #999");
-			topButtonsBox.setPrefWidth(100);
-			topButtonsBox.setAlignment(Pos.CENTER);
-
-			leftButtonsBox.setPadding(new Insets(5));
-			leftButtonsBox.setStyle("-fx-background-color: #999");
-			leftButtonsBox.setPrefWidth(100);
-
-			rightButtonsBox.setPadding(new Insets(5));
-			rightButtonsBox.setStyle("-fx-background-color: #999");
-			rightButtonsBox.setPrefWidth(100);
-
-			//setup event
-			shadowTypeBox.setOnAction(paintPaneEvents::onChoiceBoxSelection);
-			canvas.setOnMousePressed(paintPaneEvents::onMousePressed);
-			canvas.setOnMouseReleased(paintPaneEvents::onMouseRelease);
-			canvas.setOnMouseMoved(paintPaneEvents::onMouseMoved);
-			canvas.setOnMouseClicked(paintPaneEvents::onMouseClicked);
-			canvas.setOnMouseDragged(paintPaneEvents::onMouseDragged);
-			deleteButton.setOnAction(paintPaneEvents::onDeleteButtonClick);
-			copyFormatButton.setOnAction(paintPaneEvents::onCopyFormatButtonClick);
-			turnButton.setOnAction(paintPaneEvents::onTurnButtonClick);
-			flipHorizontalButton.setOnAction(paintPaneEvents::onFlipHorizontalButtonCLick);
-			flipVerticalButton.setOnAction(paintPaneEvents::onFlipVerticalButton);
-			duplicateButton.setOnAction(paintPaneEvents::onDuplicateButton);
-			divideButton.setOnAction(paintPaneEvents::onDivideButtonClick);
-
-			setLeft(leftButtonsBox);
-			setTop(topButtonsBox);
-			setCenter(canvas);
-			setRight(rightButtonsBox);
-
-			showLayerRadioButton.setToggleGroup(showHideToggle);
-			hideLayerRadioButton.setToggleGroup(showHideToggle);
+			initializePaintPane(this, canvasState, statusPane);
 		}
 
 		public void redrawCanvas() {

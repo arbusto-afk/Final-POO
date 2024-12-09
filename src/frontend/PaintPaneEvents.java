@@ -195,4 +195,65 @@ public class PaintPaneEvents {
         }
         return res;
     }
+
+    public void showToggle(ActionEvent event) {
+        if (paintPane.showLayerRadioButton.isSelected()) {
+            paintPane.canvasState.showLayer();
+        }
+        paintPane.redrawCanvas();
+    }
+
+    public void hideToggle(ActionEvent event) {
+        if (paintPane.hideLayerRadioButton.isSelected()) {
+            paintPane.canvasState.hideLayer();
+        }
+        paintPane.redrawCanvas();
+    }
+
+    public void createLayer(ActionEvent event) {
+        createLayer();
+    }
+
+    public void createLayer() {
+        int layer = paintPane.canvasState.addLayer();
+        paintPane.layersChoiceBox.getItems().add("Capa " + layer);
+        paintPane.redrawCanvas();
+    }
+
+    public void removeLayer(ActionEvent event) {
+        if(paintPane.canvasState.getWorkingLayer() == 1){
+            return;
+        }
+        int newLayer = paintPane.canvasState.getLastUsedLayer();
+        paintPane.layersChoiceBox.setValue("Capa 1");
+        paintPane.canvasState.deleteLayer();
+        paintPane.canvasState.changeLayer(1);
+        paintPane.layersChoiceBox.setValue("Capa 1");
+        paintPane.layersChoiceBox.setValue("Capa 1");
+        paintPane.layersChoiceBox.setValue("Capa 1");
+        paintPane.redrawCanvas();
+    }
+
+    public void layerChange(ActionEvent event) {
+        paintPane.canvasState.changeLayer(Integer.parseInt(paintPane.layersChoiceBox.getValue()));
+        updateRadioButtons();
+        paintPane.redrawCanvas();
+    }
+
+
+    public void onLayerSelection(ActionEvent event) {
+        paintPane.canvasState.changeLayer(Integer.parseInt(paintPane.layersChoiceBox.getValue()));
+        updateRadioButtons();
+        paintPane.redrawCanvas();
+    }
+
+    public void updateRadioButtons(){
+        if (paintPane.canvasState.isHidden()){
+            paintPane.hideLayerRadioButton.setSelected(true);
+            paintPane.showLayerRadioButton.setSelected(false);
+        } else {
+            paintPane.showLayerRadioButton.setSelected(true);
+            paintPane.hideLayerRadioButton.setSelected(false);
+        }
+    }
 }
