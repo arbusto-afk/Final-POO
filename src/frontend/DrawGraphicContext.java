@@ -26,7 +26,11 @@ public class DrawGraphicContext {
         gc.setLineWidth(defaultWidth);
     }
 
-    public void drawFigure(Figure fig, boolean isSelected, List<Color> colors){
+    public void drawFigure(Figure fig, boolean isSelected, List<Color> c){
+        List<Color> colors = fig.getColors();
+        if (colors == null || colors.isEmpty()) {
+            colors = List.of(Color.YELLOW, Color.ORANGE);
+        }
         switch(fig){
             case Ellipse rf -> { drawRadialFigure( rf, isSelected, colors); }
             case Rectangle lf -> { drawLinearFigure(lf, isSelected, colors);}
@@ -35,8 +39,13 @@ public class DrawGraphicContext {
     }
 
     private void drawRadialFigure(Ellipse figure, boolean isSelected, List<Color> colors){
-        if(figure.getShadeType() != Shadow.NONE){
-            gc.setFill(Color.CYAN);
+        if (figure.getShadeType() != Shadow.NONE) {
+            Color shadowColor = Color.GRAY; // Color por defecto para sombra
+            if (figure.getShadeType() == Shadow.COLOR || figure.getShadeType() == Shadow.INVERTEDCOLOR  && !colors.isEmpty()) {
+                shadowColor = colors.get(0).deriveColor(0, 1, 0.7, 1);
+            }
+            gc.setFill(shadowColor);
+
             gc.fillOval(figure.getCenterPoint().getX() - figure.getWidth() / 2 + figure.getShadeType().getOffset(),
                     figure.getCenterPoint().getY() - figure.getHeight() / 2 + figure.getShadeType().getOffset(), figure.getWidth(), figure.getHeight());
         }
@@ -50,7 +59,7 @@ public class DrawGraphicContext {
 
     }
     private void drawRadialBevel(Ellipse figure){
-        gc.setStroke(Color.LIGHTGRAY);
+        gc.setStroke(Color.GRAY);
         double aux = gc.getLineWidth();
         gc.setLineWidth(bevelWidth);
         gc.strokeArc(
@@ -76,8 +85,12 @@ public class DrawGraphicContext {
     }
 
     private void drawLinearFigure(Rectangle figure, boolean isSelected, List<Color> colors){
-        if(figure.getShadeType() != Shadow.NONE) {
-            gc.setFill(Color.CYAN);
+        if (figure.getShadeType() != Shadow.NONE) {
+            Color shadowColor = Color.GRAY;
+            if (figure.getShadeType() == Shadow.COLOR || figure.getShadeType() == Shadow.INVERTEDCOLOR  && !colors.isEmpty()) {
+                shadowColor = colors.get(0).deriveColor(0, 1, 0.7, 1);
+            }
+            gc.setFill(shadowColor);
             gc.fillRect(figure.getTopLeft().getX() + figure.getShadeType().getOffset(),
                     figure.getTopLeft().getY() + figure.getShadeType().getOffset(),
                     Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()),

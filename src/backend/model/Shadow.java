@@ -1,5 +1,7 @@
 package backend.model;
 
+import java.awt.*;
+
 public enum Shadow {
     NONE, SIMPLE, COLOR, INVERTED, INVERTEDCOLOR;
 
@@ -12,5 +14,6 @@ public enum Shadow {
             return this.shadowOffset;
         return -this.shadowOffset;
     }
+
 
 }

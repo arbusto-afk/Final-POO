@@ -1,10 +1,11 @@
 package backend.model;
 
 
+import javafx.scene.paint.Color;
 import java.util.List;
 
 public abstract class Figure {
-    //private List<Color> colors;
+    private List<Color> colors;
 
     private static final int DUPLICATEOFFSET = 15;
 
@@ -35,7 +36,7 @@ public abstract class Figure {
         this.width = width;
         this.height = height;
     }
-
+    public List<Color> getColors() { return colors;}
     public boolean getHasBevel() { return hasBevel; }
     public void setHasBevel(boolean hasBevel) { this.hasBevel = hasBevel; }
 
@@ -47,6 +48,7 @@ public abstract class Figure {
     public void move(Point newCenter){
         this.centerPoint = newCenter;
     }
+    public void setColors(List<Color> colors) { this.colors = colors;}
 
     /*
         Returns whether a point belongs to the figure or not

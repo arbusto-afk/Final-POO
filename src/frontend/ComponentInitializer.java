@@ -2,25 +2,17 @@ package frontend;
 
 import backend.CanvasState;
 import backend.model.*;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ComponentInitializer {
 
-public class compInitializer {
-
-    public static void initializePaintPane(PaintPane paintPane, CanvasState canvasState, StatusPane statusPane) {
-        PaintPaneEvents paintPaneEvents = new PaintPaneEvents(paintPane);
+    public void initializePaintPane(PaintPane paintPane, CanvasState canvasState, StatusPane statusPane) {
+        ComponentEvents componentEvents = new ComponentEvents(paintPane);
 
         // Initialize ToggleButtons
         ToggleButton[] toolsArr = {
@@ -60,8 +52,6 @@ public class compInitializer {
         paintPane.shadowTypeBox.setValue(Shadow.NONE);
         paintPane.shadowTypeBox.getItems().addAll(Shadow.values());
 
-        // Set up Hide and Show Layer Radio Buttons
-        paintPaneEvents.updateRadioButtons();
 
         // Style and position boxes
         topButtonsBox.setPadding(new Insets(5));
@@ -77,24 +67,31 @@ public class compInitializer {
         rightButtonsBox.setStyle("-fx-background-color: #999");
         rightButtonsBox.setPrefWidth(100);
 
+        // Set up radio buttons for show/hide layer toggle
+        paintPane.showLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
+        paintPane.hideLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
+
         // Set up events
-        paintPane.shadowTypeBox.setOnAction(paintPaneEvents::onChoiceBoxSelection);
-        paintPane.canvas.setOnMousePressed(paintPaneEvents::onMousePressed);
-        paintPane.canvas.setOnMouseReleased(paintPaneEvents::onMouseRelease);
-        paintPane.canvas.setOnMouseMoved(paintPaneEvents::onMouseMoved);
-        paintPane.canvas.setOnMouseClicked(paintPaneEvents::onMouseClicked);
-        paintPane.canvas.setOnMouseDragged(paintPaneEvents::onMouseDragged);
-        paintPane.deleteButton.setOnAction(paintPaneEvents::onDeleteButtonClick);
-        paintPane.copyFormatButton.setOnAction(paintPaneEvents::onCopyFormatButtonClick);
-        paintPane.turnButton.setOnAction(paintPaneEvents::onTurnButtonClick);
-        paintPane.flipHorizontalButton.setOnAction(paintPaneEvents::onFlipHorizontalButtonCLick);
-        paintPane.flipVerticalButton.setOnAction(paintPaneEvents::onFlipVerticalButton);
-        paintPane.duplicateButton.setOnAction(paintPaneEvents::onDuplicateButton);
-        paintPane.divideButton.setOnAction(paintPaneEvents::onDivideButtonClick);
-        paintPane.showLayerRadioButton.setOnAction(paintPaneEvents::showToggle);
-        paintPane.hideLayerRadioButton.setOnAction(paintPaneEvents::hideToggle);
-        paintPane.addLayerButton.setOnAction(paintPaneEvents::createLayer);
-        paintPane.removeLayerButton.setOnAction(paintPaneEvents::removeLayer);
+        paintPane.shadowTypeBox.setOnAction(componentEvents::onChoiceBoxSelection);
+        paintPane.canvas.setOnMousePressed(componentEvents::onMousePressed);
+        paintPane.canvas.setOnMouseReleased(componentEvents::onMouseRelease);
+        paintPane.canvas.setOnMouseMoved(componentEvents::onMouseMoved);
+        paintPane.canvas.setOnMouseClicked(componentEvents::onMouseClicked);
+        paintPane.canvas.setOnMouseDragged(componentEvents::onMouseDragged);
+        paintPane.deleteButton.setOnAction(componentEvents::onDeleteButtonClick);
+        paintPane.copyFormatButton.setOnAction(componentEvents::onCopyFormatButtonClick);
+        paintPane.turnButton.setOnAction(componentEvents::onTurnButtonClick);
+        paintPane.flipHorizontalButton.setOnAction(componentEvents::onFlipHorizontalButtonCLick);
+        paintPane.flipVerticalButton.setOnAction(componentEvents::onFlipVerticalButton);
+        paintPane.duplicateButton.setOnAction(componentEvents::onDuplicateButton);
+        paintPane.divideButton.setOnAction(componentEvents::onDivideButtonClick);
+        paintPane.layersChoiceBox.setOnAction(componentEvents::onLayerSelection);
+        paintPane.showLayerRadioButton.setOnAction(componentEvents::showToggle);
+        paintPane.hideLayerRadioButton.setOnAction(componentEvents::hideToggle);
+        paintPane.addLayerButton.setOnAction(componentEvents::createLayer);
+        paintPane.removeLayerButton.setOnAction(componentEvents::removeLayer);
+        paintPane.pushForwardButton.setOnAction(componentEvents::pushForward);
+        paintPane.pushToBottomButton.setOnAction(componentEvents::pushToBottom);
 
 
         // Set up layout
@@ -103,13 +100,14 @@ public class compInitializer {
         paintPane.setCenter(paintPane.canvas);
         paintPane.setRight(rightButtonsBox);
 
-        paintPane.showLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
-        paintPane.hideLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
 
         // Creates the first 3 layers
-        paintPaneEvents.createLayer();
-        paintPaneEvents.createLayer();
-        paintPaneEvents.createLayer();
+        componentEvents.createLayer();
+        componentEvents.createLayer();
+        componentEvents.createLayer();
         paintPane.layersChoiceBox.setValue("Capa 1");
+
+        // Set up Hide and Show Layer Radio Buttons
+        componentEvents.updateRadioButtons();
     }
 }

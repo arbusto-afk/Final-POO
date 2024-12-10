@@ -60,6 +60,7 @@
                     getShadeType(),
                     getHasBevel());
         }
+
         @Override
         public void resize(double width, double height){
             super.resize(width, height);

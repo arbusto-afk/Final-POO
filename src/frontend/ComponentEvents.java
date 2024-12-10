@@ -1,10 +1,7 @@
 package frontend;
 
-import backend.CanvasState;
 import backend.model.*;
 import javafx.event.ActionEvent;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -12,11 +9,11 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaintPaneEvents {
+public class ComponentEvents {
 
     private final PaintPane paintPane;
 
-    public PaintPaneEvents(PaintPane paintPane) {
+    public ComponentEvents(PaintPane paintPane) {
         this.paintPane = paintPane;
     }
 
@@ -68,7 +65,7 @@ public class PaintPaneEvents {
                 default:
                     return;
             }
-
+            newFigure.setColors(colors);
             newFigure.setHasBevel(paintPane.bevelCheckbox.isSelected());
             paintPane.canvasState.addFigure(newFigure);
 
@@ -113,11 +110,13 @@ public class PaintPaneEvents {
             Figure figureToPasteFormatOnto = null;
             for (Figure figure : paintPane.canvasState.figuresAtPoint(eventPoint)) {
                 figureToPasteFormatOnto = figure;
+             //   figureToPasteFormatOnto.setColors(paintPane.copiedColors);
                 break;
             }
             if (figureToPasteFormatOnto != null) {
                 figureToPasteFormatOnto.setShadeType(paintPane.copiedFigure.getShadeType());
                 figureToPasteFormatOnto.setHasBevel(paintPane.copiedFigure.getHasBevel());
+                figureToPasteFormatOnto.setColors(paintPane.copiedColors);
                 paintPane.redrawCanvas();
             }
             paintPane.copiedFigure = null;
@@ -151,6 +150,7 @@ public class PaintPaneEvents {
         if (paintPane.selectedFigure == null)
             return;
         paintPane.copiedFigure = paintPane.selectedFigure;
+        paintPane.copiedColors = paintPane.selectedFigure.getColors();
     }
 
     public void onTurnButtonClick(ActionEvent event) {
@@ -176,7 +176,9 @@ public class PaintPaneEvents {
 
     public void onDuplicateButton(ActionEvent event) {
         if (paintPane.selectedFigure != null) {
-            paintPane.canvasState.addFigure(paintPane.selectedFigure.duplicate());
+            Figure duplicate = paintPane.selectedFigure.duplicate();
+            duplicate.setColors(paintPane.selectedFigure.getColors());
+            paintPane.canvasState.addFigure(duplicate);
             paintPane.redrawCanvas();
         }
     }
@@ -215,45 +217,52 @@ public class PaintPaneEvents {
     }
 
     public void createLayer() {
-        int layer = paintPane.canvasState.addLayer();
-        paintPane.layersChoiceBox.getItems().add("Capa " + layer);
+        int newLayerNumber = paintPane.canvasState.getNextLayerNumber();
+        String newLayerName = "Capa " + newLayerNumber;
+        paintPane.canvasState.increaseNextLayerNumber();
+        paintPane.layersChoiceBox.getItems().add(newLayerName);
+        System.out.println(newLayerName);
+        paintPane.canvasState.addLayer(newLayerName);
+        paintPane.canvasState.changeLayer(newLayerName);
+        paintPane.layersChoiceBox.setValue(newLayerName);
         paintPane.redrawCanvas();
     }
 
     public void removeLayer(ActionEvent event) {
-        if(paintPane.canvasState.getWorkingLayer() == 1){
+        if(paintPane.canvasState.getWorkingLayer().compareTo("Capa 4") < 0){
             return;
         }
-        int newLayer = paintPane.canvasState.getLastUsedLayer();
+        String layerToDelete = paintPane.layersChoiceBox.getValue();
+        System.out.println(layerToDelete);
         paintPane.layersChoiceBox.setValue("Capa 1");
-        paintPane.canvasState.deleteLayer();
-        paintPane.canvasState.changeLayer(1);
-        paintPane.layersChoiceBox.setValue("Capa 1");
-        paintPane.layersChoiceBox.setValue("Capa 1");
-        paintPane.layersChoiceBox.setValue("Capa 1");
-        paintPane.redrawCanvas();
-    }
-
-    public void layerChange(ActionEvent event) {
-        paintPane.canvasState.changeLayer(Integer.parseInt(paintPane.layersChoiceBox.getValue()));
-        updateRadioButtons();
+        paintPane.layersChoiceBox.getItems().remove(layerToDelete);
+        paintPane.canvasState.deleteLayer(layerToDelete);
+        paintPane.canvasState.changeLayer("Capa 1");
         paintPane.redrawCanvas();
     }
 
 
     public void onLayerSelection(ActionEvent event) {
-        paintPane.canvasState.changeLayer(Integer.parseInt(paintPane.layersChoiceBox.getValue()));
+        paintPane.canvasState.changeLayer(paintPane.layersChoiceBox.getValue());
         updateRadioButtons();
         paintPane.redrawCanvas();
     }
 
     public void updateRadioButtons(){
-        if (paintPane.canvasState.isHidden()){
-            paintPane.hideLayerRadioButton.setSelected(true);
-            paintPane.showLayerRadioButton.setSelected(false);
-        } else {
-            paintPane.showLayerRadioButton.setSelected(true);
-            paintPane.hideLayerRadioButton.setSelected(false);
-        }
+        paintPane.hideLayerRadioButton.setSelected(!paintPane.canvasState.isVisible());
+        paintPane.showLayerRadioButton.setSelected(paintPane.canvasState.isVisible());
+    }
+
+
+    public void pushForward(ActionEvent event){
+        System.out.println("push to top");
+        paintPane.canvasState.pushForward();
+        paintPane.redrawCanvas();
+    }
+
+    public void pushToBottom(ActionEvent event){
+        System.out.println("push to bottom");
+        paintPane.canvasState.pushToBottom();
+        paintPane.redrawCanvas();
     }
 }

@@ -19,10 +19,9 @@
 	import java.util.ArrayList;
 	import java.util.List;
 
-	import static frontend.compInitializer.initializePaintPane;
-
 	public class PaintPane extends BorderPane {
-	
+
+		ComponentInitializer componentInitializer = new ComponentInitializer();
 		// BackEnd
 		CanvasState canvasState;
 	
@@ -80,6 +79,8 @@
 		// Seleccionar una figura
 		Figure selectedFigure;
 		Figure copiedFigure;
+		List<Color> copiedColors;
+
 		// StatusBar
 		StatusPane statusPane;
 
@@ -90,8 +91,9 @@
         public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 			this.canvasState = canvasState;
 			this.statusPane = statusPane;
-			initializePaintPane(this, canvasState, statusPane);
+			componentInitializer.initializePaintPane(this, canvasState, statusPane);
 		}
+
 
 		public void redrawCanvas() {
 			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());

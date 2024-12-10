@@ -18,6 +18,9 @@ public class ColorHandler {
                 createStopsFromColorList(colors));
     }
     private List<Stop> createStopsFromColorList(List<Color> list){
+        if (list == null) {
+            throw new IllegalArgumentException("La lista de colores no puede ser nula");
+        }
         List<Stop> stops = new ArrayList<>();
         for(Color c : list){
             double travelPercentage = (double)stops.size() / (list.size() - 1);

@@ -7,107 +7,111 @@ import java.util.*;
 
 public class CanvasState {
 
-    private int workingLayer = 1;
-    private int lastLayer = 1;
+    private String workingLayer;
+    private int nextLayerNumber = 1;
 
-//    private final SequencedMap<Boolean, LayersContent> figuresLayers = new TreeMap<>();
 
-    private final SortedMap<Integer, List<Figure>> figuresLayers = new TreeMap<>();
-
-    private final SortedMap<Integer, List<Figure>> hiddenLayers = new TreeMap<>();
+    private final SequencedMap<String, LayersContent> figuresLayers = new LinkedHashMap<>();
 
 
     public void addFigure(Figure figure) {
-        if (!figuresLayers.containsKey(workingLayer)) {
-            figuresLayers.put(workingLayer, new ArrayList<>());
-        }
-        figuresLayers.get(workingLayer).add(figure);
+        checkLayers(workingLayer);
+        figuresLayers.get(workingLayer).addFigure(figure);
     }
 
     public void deleteFigure(Figure figure) {
-        figuresLayers.get(workingLayer).remove(figure);
+        checkLayers(workingLayer);
+        figuresLayers.get(workingLayer).deleteFigure(figure);
     }
 
     public void divideFigure(Figure figure){
-        if(!figuresLayers.get(workingLayer).contains(figure))
-            throw new RuntimeException("Attempting to divide nonexistent figure");
-        //list.remove(figure);
-        figure.move(figure.getCenterPoint().substractX(figure.getWidth() / 4));
-        figure.resize(figure.getWidth() / 2, figure.getHeight() / 2);
-        Figure dupl = figure.duplicate();
-        dupl.move(figure.getCenterPoint().addX(figure.getWidth()));
-        figuresLayers.get(workingLayer).add(dupl);
-     //   list.add(figure);
+        checkLayers(workingLayer);
+        figuresLayers.get(workingLayer).divideFigure(figure);
     }
 
     public Iterable<Figure> figures() {
-        return new ArrayList<>(figuresLayers.get(workingLayer));
-    }
-
-    public Iterable<Figure> figuresAtPoint(Point p){
         List<Figure> returnIterable = new ArrayList<>();
-        for(Figure fig : figuresLayers.get(workingLayer)){
-            if(fig.pointBelongs(p))
-                returnIterable.add(fig);
+        for(LayersContent arr : figuresLayers.values()){
+            if(arr.isVisible())
+                returnIterable.addAll(arr.getFigures());
         }
         return returnIterable;
     }
 
-    public int addLayer() {
-        figuresLayers.putIfAbsent(lastLayer, new ArrayList<>());
-        lastLayer++;
-        return lastLayer-1;
-    }
-
-    public void deleteLayer() {
-        if(isHidden()){
-            hiddenLayers.get(workingLayer).clear();
-            hiddenLayers.remove(workingLayer);
+    public Iterable<Figure> figuresAtPoint(Point p){
+        List<Figure> returnIterable = new ArrayList<>();
+        for(LayersContent arr : figuresLayers.values()){
+            if(arr.isVisible()){
+                for (Figure fig : arr.getFigures()) {
+                    if (fig.pointBelongs(p))
+                        returnIterable.add(fig);
+                }
+            }
         }
-        else {
-            figuresLayers.get(workingLayer).clear();
-            figuresLayers.remove(workingLayer);
-        }
+        return returnIterable;
+    }
+
+    public void addLayer(String newLayerName) {
+        figuresLayers.putLast(newLayerName, new LayersContent(newLayerName));
+    }
+
+    public void deleteLayer(String layerToDelete) {
+        figuresLayers.remove(layerToDelete);
     }
 
 
-    public void clearLayer(SortedMap<Integer, List<Figure>> map){
-        map.get(workingLayer).clear();
-    }
+    public String getWorkingLayer() {return workingLayer;}
 
-    public int getWorkingLayer() {return workingLayer;}
+    public int getNextLayerNumber() {return nextLayerNumber;}
 
-    public int getLastUsedLayer(){
-        if(figuresLayers.lastKey() < hiddenLayers.lastKey())
-            return hiddenLayers.lastKey();
-        return figuresLayers.lastKey();
-    }
+    public void increaseNextLayerNumber() {++nextLayerNumber;}
 
 
     //Si existe la layer, entonces la cambia y retorna true, si no, retorna false.
-    public void changeLayer(int newLayer){
+    public void changeLayer(String newLayer){
         if(figuresLayers.containsKey(newLayer)){
             workingLayer = newLayer;
         }
     }
 
     public void showLayer(){
-        if(hiddenLayers.containsKey(workingLayer)){
-            figuresLayers.get(workingLayer).addAll(hiddenLayers.get(workingLayer));
-            clearLayer(hiddenLayers);
-        }
+        checkLayers(workingLayer);
+        figuresLayers.get(workingLayer).show();
     }
 
     public void hideLayer(){
-        if(!hiddenLayers.containsKey(workingLayer)){
-            hiddenLayers.put(workingLayer, new ArrayList<>());
-        }
-        hiddenLayers.get(workingLayer).addAll(figuresLayers.get(workingLayer));
-        clearLayer(figuresLayers);
+        checkLayers(workingLayer);
+        figuresLayers.get(workingLayer).hide();
     }
 
-    public boolean isHidden(){
-        return hiddenLayers.containsKey(workingLayer);
+    public boolean isVisible(){
+        checkLayers(workingLayer);
+        return figuresLayers.get(workingLayer).isVisible();
     }
+
+    public void pushForward(){
+        checkLayers(workingLayer);
+        figuresLayers.putLast(workingLayer, push());
+    }
+
+    public void pushToBottom(){
+        checkLayers(workingLayer);
+        figuresLayers.putFirst(workingLayer, push());
+    }
+
+    private LayersContent push(){
+        checkLayers(workingLayer);
+        LayersContent aux = figuresLayers.get(workingLayer);
+        figuresLayers.remove(workingLayer);
+        return aux;
+    }
+
+
+    private void checkLayers(String layerName){
+        if(!figuresLayers.containsKey(layerName)){
+            throw new RuntimeException("Attempting to access nonexistent layer");
+        }
+    }
+
 }
 
