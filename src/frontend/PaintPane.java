@@ -23,7 +23,7 @@
 
 		ComponentInitializer componentInitializer = new ComponentInitializer();
 		// BackEnd
-		CanvasState canvasState;
+		CanvasState<Color> canvasState;
 	
 		// Canvas y relacionados
 		Canvas canvas = new Canvas(800, 600);

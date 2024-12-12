@@ -37,12 +37,12 @@
         public Point getBottomRight() { return bottomRight; }
 
         @Override
-        public void move(Point newCenter){
+        public Figure move(Point newCenter){
             Point topLeftOffset = getTopLeft().getDifference(getCenterPoint());
             Point botRightOffset = getBottomRight().getDifference(getCenterPoint());
-            super.move(newCenter);
             this.topLeft = newCenter.add(topLeftOffset);
             this.bottomRight = newCenter.add(botRightOffset);
+            return super.move(newCenter);
         }
 
         public void turnRight() {

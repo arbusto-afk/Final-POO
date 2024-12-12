@@ -78,7 +78,7 @@ public class ComponentEvents {
     public void onMouseMoved(MouseEvent event) {
         Point eventPoint = new Point(event.getX(), event.getY());
         StringBuilder strB = new StringBuilder();
-        for (Figure fig : paintPane.canvasState.figuresAtPoint(eventPoint)) {
+        for (Figure fig : paintPane.canvasState.visibleFiguresAtPoint(eventPoint)) {
             strB.append(fig.toString());
         }
         if (strB.isEmpty()) {
@@ -93,7 +93,7 @@ public class ComponentEvents {
         if (paintPane.selectionButton.isSelected()) {
             boolean found = false;
             StringBuilder label = new StringBuilder("Se seleccionó: ");
-            for (Figure fig : paintPane.canvasState.figuresAtPoint(eventPoint)) {
+            for (Figure fig : paintPane.canvasState.visibleFiguresAtPoint(eventPoint)) {
                 label.append(fig.toString());
                 paintPane.selectedFigure = fig;
                 found = true;
@@ -108,7 +108,7 @@ public class ComponentEvents {
         }
         if (paintPane.copiedFigure != null) {
             Figure figureToPasteFormatOnto = null;
-            for (Figure figure : paintPane.canvasState.figuresAtPoint(eventPoint)) {
+            for (Figure figure : paintPane.canvasState.visibleFiguresAtPoint(eventPoint)) {
                 figureToPasteFormatOnto = figure;
              //   figureToPasteFormatOnto.setColors(paintPane.copiedColors);
                 break;
@@ -199,25 +199,25 @@ public class ComponentEvents {
     }
 
     public void showToggle(ActionEvent event) {
-        if (paintPane.showLayerRadioButton.isSelected()) {
+      /*  if (paintPane.showLayerRadioButton.isSelected()) {
             paintPane.canvasState.showLayer();
         }
         paintPane.redrawCanvas();
-    }
+    */}
 
     public void hideToggle(ActionEvent event) {
-        if (paintPane.hideLayerRadioButton.isSelected()) {
+    /*    if (paintPane.hideLayerRadioButton.isSelected()) {
             paintPane.canvasState.hideLayer();
         }
         paintPane.redrawCanvas();
-    }
+    */}
 
     public void createLayer(ActionEvent event) {
         createLayer();
     }
 
     public void createLayer() {
-        int newLayerNumber = paintPane.canvasState.getNextLayerNumber();
+      /*  int newLayerNumber = paintPane.canvasState.getNextLayerNumber();
         String newLayerName = "Capa " + newLayerNumber;
         paintPane.canvasState.increaseNextLayerNumber();
         paintPane.layersChoiceBox.getItems().add(newLayerName);
@@ -226,10 +226,10 @@ public class ComponentEvents {
         paintPane.canvasState.changeLayer(newLayerName);
         paintPane.layersChoiceBox.setValue(newLayerName);
         paintPane.redrawCanvas();
-    }
+    */}
 
     public void removeLayer(ActionEvent event) {
-        if(paintPane.canvasState.getWorkingLayer().compareTo("Capa 4") < 0){
+      /*  if(paintPane.canvasState.getWorkingLayer().compareTo("Capa 4") < 0){
             return;
         }
         String layerToDelete = paintPane.layersChoiceBox.getValue();
@@ -239,30 +239,30 @@ public class ComponentEvents {
         paintPane.canvasState.deleteLayer(layerToDelete);
         paintPane.canvasState.changeLayer("Capa 1");
         paintPane.redrawCanvas();
-    }
+    */}
 
 
     public void onLayerSelection(ActionEvent event) {
-        paintPane.canvasState.changeLayer(paintPane.layersChoiceBox.getValue());
+      /*  paintPane.canvasState.changeLayer(paintPane.layersChoiceBox.getValue());
         updateRadioButtons();
         paintPane.redrawCanvas();
-    }
+    */}
 
     public void updateRadioButtons(){
-        paintPane.hideLayerRadioButton.setSelected(!paintPane.canvasState.isVisible());
+      /*  paintPane.hideLayerRadioButton.setSelected(!paintPane.canvasState.isVisible());
         paintPane.showLayerRadioButton.setSelected(paintPane.canvasState.isVisible());
-    }
+    */}
 
 
     public void pushForward(ActionEvent event){
-        System.out.println("push to top");
+      /*  System.out.println("push to top");
         paintPane.canvasState.pushForward();
         paintPane.redrawCanvas();
-    }
+    */}
 
     public void pushToBottom(ActionEvent event){
-        System.out.println("push to bottom");
+       /* System.out.println("push to bottom");
         paintPane.canvasState.pushToBottom();
         paintPane.redrawCanvas();
-    }
+    */}
 }

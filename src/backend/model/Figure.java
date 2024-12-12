@@ -45,8 +45,9 @@ public abstract class Figure {
 
     public double getDuplicateOffset() { return DUPLICATEOFFSET; }
 
-    public void move(Point newCenter){
+    public Figure move(Point newCenter){
         this.centerPoint = newCenter;
+        return this;
     }
     public void setColors(List<Color> colors) { this.colors = colors;}
 
