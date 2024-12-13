@@ -12,7 +12,7 @@ public class Square extends Rectangle {
         return String.format("Cuadrado [ %s , %s ]", super.getTopLeft(), super.getBottomRight());
     }
     @Override
-    public Square duplicate() {
-       return new Square(getTopLeft().add(getDuplicateOffset()), getHeight(), getShadeType(), getHasBevel());
+    public Square duplicate(Integer offset) {
+       return new Square(getTopLeft().add(offset), getHeight(), getShadeType(), getHasBevel());
     }
 }

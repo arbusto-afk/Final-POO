@@ -53,10 +53,10 @@
         }
 
 
-        public Rectangle duplicate(){
+        public Rectangle duplicate(Integer offset){
             return new Rectangle(
-                    getTopLeft().add(getDuplicateOffset()),
-                    getBottomRight().add(getDuplicateOffset()),
+                    getTopLeft().add(offset),
+                    getBottomRight().add(offset),
                     getShadeType(),
                     getHasBevel());
         }

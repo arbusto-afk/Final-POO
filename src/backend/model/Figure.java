@@ -5,9 +5,6 @@ import javafx.scene.paint.Color;
 import java.util.List;
 
 public abstract class Figure {
-    private List<Color> colors;
-
-    private static final int DUPLICATEOFFSET = 15;
 
     private Point centerPoint;
     private double width, height;
@@ -36,21 +33,16 @@ public abstract class Figure {
         this.width = width;
         this.height = height;
     }
-    public List<Color> getColors() { return colors;}
     public boolean getHasBevel() { return hasBevel; }
     public void setHasBevel(boolean hasBevel) { this.hasBevel = hasBevel; }
 
     public Shadow getShadeType() { return shadeType; }
     public void setShadeType(Shadow shadeType) { this.shadeType = shadeType; }
 
-    public double getDuplicateOffset() { return DUPLICATEOFFSET; }
-
     public Figure move(Point newCenter){
         this.centerPoint = newCenter;
         return this;
     }
-    public void setColors(List<Color> colors) { this.colors = colors;}
-
     /*
         Returns whether a point belongs to the figure or not
      */
@@ -66,6 +58,6 @@ public abstract class Figure {
     }
 
   //  public abstract List<Figure> divide();
-    public abstract Figure duplicate();
+    public abstract Figure duplicate(Integer offSet);
 }
 

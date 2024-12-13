@@ -22,8 +22,8 @@ public class Circle extends Ellipse {
         return getWidth() / 2;
     }
 
-    public Circle duplicate(){
-        return new Circle(getCenterPoint().add(getDuplicateOffset()),getRadius(), getShadeType(), getHasBevel() );
+    public Circle duplicate(Integer offset){
+        return new Circle(getCenterPoint().add(offset),getRadius(), getShadeType(), getHasBevel() );
     }
 
 

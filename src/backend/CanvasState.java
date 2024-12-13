@@ -6,6 +6,7 @@ import backend.model.Point;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class CanvasState<T> {
 
@@ -13,45 +14,64 @@ public class CanvasState<T> {
     Cada layer es unica, se mantiene su orden de insercion;
      */
     private final Map<Integer, Layer> layers = new TreeMap<>();
+    private final Map<Figure, T> colorMap = new HashMap<>();
+    private List<Figure> selectedFigures;
 
-    /*
-    Agrega una figura a la capa especificada, si no existe la capa la crea
-     */
-    public CanvasState(){
-        layers.put(1, new Layer());
+    private final Integer STARTINGLAYERS = 3;
+
+    public void setFigureColor(Figure fig, T color){
+        colorMap.put(fig, color);
     }
-    public void addFigure(Figure figure) {
-        //if(layers.(layerIndex) == null)
-         //   layers.put(layerIndex, new Layer());
-        //layers.get(layerIndex).addFigure(figure);
-        layers.get(1).addFigure(figure);
-    }
-    /*
-    Borra una figura de la capa seleccionada, si no existe no hace nada
-     */
-    public void deleteFigure(Figure figure) {
-        //if(layers.containsValue());
-        layers.get(1).removeFigure(figure);
-    }
-    public void divideFigure(Figure figure){
-     //   layers.get(1).divideFigure(figure);
-       // if(!list.contains(figure))
-        //   throw new RuntimeException("Attempting to divide nonexistent figure");
-        //list.remove(figure);
-        figure.move(figure.getCenterPoint().substractX(figure.getWidth() / 4));
-        figure.resize(figure.getWidth() / 2, figure.getHeight() / 2);
-        Figure dupl = figure.duplicate();
-        dupl.move(figure.getCenterPoint().addX(figure.getWidth()));
-        addFigure(dupl);
+    public T getFigureColor(Figure fig){
+        return colorMap.get(fig);
     }
 
-    private List<Figure> collectFigures(boolean collectHidden){
-        List<Figure> returnIterable = new ArrayList<>();
-        for(Layer l : layers.values()){
-            if(collectHidden || !l.isHidden())
-                returnIterable.addAll(l.figures());
+    private Layer getOrInitializeLayer(Integer layerIndex) {
+        if (layers.containsKey(layerIndex))
+            return layers.get(layerIndex);
+        Layer l = new Layer();
+        layers.put(layerIndex, l);
+        return l;
+    }
+
+    private void initializeInitialLayers(Integer initialLayerCount){
+        for(int i = 0; i < initialLayerCount; i++){
+            layers.putIfAbsent(i, new Layer());
         }
-        return returnIterable;
+    }
+    public CanvasState(){
+        initializeInitialLayers(STARTINGLAYERS);
+        selectedFigures = Collections.emptyList();
+    }
+
+    public void addFigure(Figure figure, Integer layerIndex) {
+        Layer l = getOrInitializeLayer(layerIndex);
+        l.addFigure(figure);
+    }
+
+    /*
+    Borra una figura de la capa seleccionada, si no existe lanza una FigureNotFoundException
+     */
+    public void deleteLayer(Integer layerIndex){
+        layers.remove(layerIndex);
+    }
+    public void deleteFigure(Figure figure, Integer layerIndex) throws FigureNotFoundException {
+        Layer l = getOrInitializeLayer(layerIndex);
+        l.removeFigure(figure);
+    }
+    public void divideFigure(Figure figure, Integer layerIndex) throws FigureNotFoundException {
+        Layer l = getOrInitializeLayer(layerIndex);
+        l.divideFigure(figure);
+    }
+
+    private List<Figure> collectFigures(boolean collectHidden) {
+        List<Figure> figures = new ArrayList<>();
+        for (Layer layer : layers.values()) {
+            if (collectHidden || !layer.isHidden()) {
+                figures.addAll(layer.figures());
+            }
+        }
+        return figures;
     }
 
     public Iterable<Figure> figures(){
@@ -68,5 +88,34 @@ public class CanvasState<T> {
         }
         return returnIterable;
     }
+
+    public List<Figure> selectedFigures() {
+        return selectedFigures;
+    }
+    public void selectFigure(List<Figure> figureList){
+        this.selectedFigures = figureList;
+    }
+    public boolean isSelected(Figure fig) {
+        return selectedFigures.contains(fig);
+    }
+    public void deselectFigures(){
+        selectedFigures = Collections.emptyList();
+    }
+
+    public void forEachSelectedFigure(Consumer<Figure> action) {
+        if (selectedFigures().isEmpty()) {
+            return;
+        }
+        for (Figure fig : selectedFigures()) {
+            action.accept(fig);
+        }
+    }
+
+    public void forEachVisibleFigure(Consumer<Figure> action) {
+        for (Figure fig : visibleFigures()) {
+            action.accept(fig);
+        }
+    }
+
 }
 

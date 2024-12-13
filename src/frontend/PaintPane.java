@@ -2,28 +2,20 @@
 	
 	import backend.CanvasState;
 	import backend.model.*;
-	import javafx.geometry.Insets;
-	import javafx.geometry.Pos;
-	import javafx.scene.Cursor;
+	import frontend.Events.CanvasEvents;
 	import javafx.scene.canvas.Canvas;
 	import javafx.scene.canvas.GraphicsContext;
 	import javafx.scene.control.*;
 	import javafx.scene.layout.BorderPane;
-	import javafx.scene.layout.HBox;
-	import javafx.scene.layout.VBox;
 	import javafx.scene.paint.*;
 
-	import javafx.event.ActionEvent;
-	import javafx.scene.input.MouseEvent;
-
-	import java.util.ArrayList;
 	import java.util.List;
 
 	public class PaintPane extends BorderPane {
 
 		ComponentInitializer componentInitializer = new ComponentInitializer();
 		// BackEnd
-		CanvasState<Color> canvasState;
+		CanvasState<Paint> canvasState;
 	
 		// Canvas y relacionados
 		Canvas canvas = new Canvas(800, 600);
@@ -51,7 +43,7 @@
 		ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
 		ColorPicker fillSecondaryColorPicker = new ColorPicker(defaultSecondaryFillColor);
 		//calculate shape gradient only from these color Picker
-		final ColorPicker[] colorPickers = {fillColorPicker, fillSecondaryColorPicker};
+			final ColorPicker[] colorPickers = {fillColorPicker, fillSecondaryColorPicker};
 
 		//Barra lateral derecha
 		Button copyFormatButton = new Button("Copiar formato");
@@ -85,20 +77,23 @@
 		StatusPane statusPane;
 
 		ToggleGroup tools = new ToggleGroup();
-		DrawGraphicContext drawingTool = new DrawGraphicContext(gc);
+		DrawingTool drawingTool;
 
 
         public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 			this.canvasState = canvasState;
 			this.statusPane = statusPane;
-			componentInitializer.initializePaintPane(this, canvasState, statusPane);
+			drawingTool = new DrawingTool(gc, canvasState, this);
+					componentInitializer.initializePaintPane(this, canvasState, statusPane, drawingTool);
 		}
 
 
-		public void redrawCanvas() {
-			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-			for(Figure figure : canvasState.figures()) {
-				drawingTool.drawFigure(figure, figure == selectedFigure, List.of(Color.YELLOW));
-			}
-		}
+
+		/*
+		*
+		*
+		*
+		*
+		 */
+
 	}

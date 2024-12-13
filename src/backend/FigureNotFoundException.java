@@ -1,6 +1,6 @@
 package backend;
 
-public class FigureNotFoundException extends RuntimeException {
+public class FigureNotFoundException extends Exception {
     public FigureNotFoundException(String message) {
         super(message);
     }

@@ -20,14 +20,13 @@ public class Layer implements Iterable<Figure> {
     public List<Figure> figures() { return figures; }
 
     public void addFigure(Figure figure) { figures.add(figure); }
-    public void removeFigure(Figure figure)
-    {
+
+    public void removeFigure(Figure figure) throws FigureNotFoundException {
         if(!figures.contains(figure))
             throw new FigureNotFoundException();
         figures.remove(figure);
     }
-    public void divideFigure(Figure figure)
-    {
+    public void divideFigure(Figure figure) throws FigureNotFoundException {
         if(!figures.contains(figure))
            throw new FigureNotFoundException();
 
@@ -36,16 +35,14 @@ public class Layer implements Iterable<Figure> {
 
         figure.resize(figure.getWidth() / 2, figure.getHeight() / 2);
         figure.move(leftCenter);
-        addFigure(figure.duplicate().move(rightCenter));
+        addFigure(figure.duplicate(0).move(rightCenter));
     }
 
-    public void sendToBack(Figure figure)
-    {
+    public void sendToBack(Figure figure) throws FigureNotFoundException {
         removeFigure(figure);
         figures.addFirst(figure);
     }
-    public void pushToFront(Figure figure)
-    {
+    public void pushToFront(Figure figure) throws FigureNotFoundException {
         removeFigure(figure);
         figures.addLast(figure);
     }

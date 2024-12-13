@@ -1,7 +1,9 @@
 package frontend;
 
 import backend.CanvasState;
+import backend.FigureNotFoundException;
 import backend.model.*;
+import frontend.Events.CanvasEvents;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -11,8 +13,8 @@ import javafx.scene.layout.VBox;
 
 public class ComponentInitializer {
 
-    public void initializePaintPane(PaintPane paintPane, CanvasState canvasState, StatusPane statusPane) {
-        ComponentEvents componentEvents = new ComponentEvents(paintPane);
+    public void initializePaintPane(PaintPane paintPane, CanvasState canvasState, StatusPane statusPane, DrawingTool dt) {
+        ComponentEvents componentEvents = new ComponentEvents(paintPane, dt);
 
         // Initialize ToggleButtons
         ToggleButton[] toolsArr = {
@@ -70,21 +72,27 @@ public class ComponentInitializer {
         // Set up radio buttons for show/hide layer toggle
         paintPane.showLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
         paintPane.hideLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
-
         // Set up events
-        paintPane.shadowTypeBox.setOnAction(componentEvents::onChoiceBoxSelection);
-        paintPane.canvas.setOnMousePressed(componentEvents::onMousePressed);
-        paintPane.canvas.setOnMouseReleased(componentEvents::onMouseRelease);
-        paintPane.canvas.setOnMouseMoved(componentEvents::onMouseMoved);
-        paintPane.canvas.setOnMouseClicked(componentEvents::onMouseClicked);
-        paintPane.canvas.setOnMouseDragged(componentEvents::onMouseDragged);
+        paintPane.shadowTypeBox.setOnAction(componentEvents::onShadowChoiceBoxSelection);
+
+        CanvasEvents ce = new CanvasEvents(canvasState, dt);
+        ce.setupCanvas(paintPane.canvas);
+
+
+
         paintPane.deleteButton.setOnAction(componentEvents::onDeleteButtonClick);
         paintPane.copyFormatButton.setOnAction(componentEvents::onCopyFormatButtonClick);
         paintPane.turnButton.setOnAction(componentEvents::onTurnButtonClick);
         paintPane.flipHorizontalButton.setOnAction(componentEvents::onFlipHorizontalButtonCLick);
         paintPane.flipVerticalButton.setOnAction(componentEvents::onFlipVerticalButton);
         paintPane.duplicateButton.setOnAction(componentEvents::onDuplicateButton);
-        paintPane.divideButton.setOnAction(componentEvents::onDivideButtonClick);
+        paintPane.divideButton.setOnAction(event -> {
+            try {
+                componentEvents.onDivideButtonClick(event);
+            } catch (FigureNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
         paintPane.layersChoiceBox.setOnAction(componentEvents::onLayerSelection);
         paintPane.showLayerRadioButton.setOnAction(componentEvents::showToggle);
         paintPane.hideLayerRadioButton.setOnAction(componentEvents::hideToggle);
