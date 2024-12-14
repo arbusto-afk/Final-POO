@@ -1,6 +1,7 @@
-package frontend;
+package frontend.Events;
 
 import backend.CanvasState;
+import frontend.DrawingTool;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,7 +11,7 @@ import javafx.scene.layout.HBox;
 public class topButtonsBox extends HBox {
 
     private  CanvasState cs;
-    private  DrawingTool dt;
+    private DrawingTool dt;
 
     final String pushForwardButtonText = "Traer al frente";
     final String pushToBottomButtonText = "Enviar al fondo";

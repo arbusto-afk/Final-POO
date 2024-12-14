@@ -2,17 +2,12 @@
 	
 	import backend.CanvasState;
 	import backend.model.*;
-	import frontend.Events.CanvasEvents;
 	import frontend.Events.LeftVBoxEvents;
 	import frontend.Events.RightVBoxEvents;
-	import frontend.topButtonsBox;
 	import javafx.scene.canvas.Canvas;
-	import javafx.scene.canvas.GraphicsContext;
 	import javafx.scene.control.*;
 	import javafx.scene.layout.BorderPane;
 	import javafx.scene.paint.*;
-
-	import java.util.List;
 
 	public class PaintPane extends BorderPane {
 
