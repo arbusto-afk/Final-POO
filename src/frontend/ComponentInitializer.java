@@ -3,6 +3,7 @@ package frontend;
 import backend.CanvasState;
 import backend.FigureNotFoundException;
 import backend.model.*;
+import frontend.topButtonsBox;
 import frontend.Events.CanvasEvents;
 import frontend.Events.LeftVBoxEvents;
 import javafx.geometry.Insets;
@@ -31,7 +32,7 @@ public class ComponentInitializer {
         // Set up left buttons box
     //    VBox leftButtonsBox = new VBox(10);
       //  VBox rightButtonsBox = new VBox(10);
-        HBox topButtonsBox = new HBox(10);
+        topButtonsBox topButtonsBox = new topButtonsBox(10);
 
     /*    Control[] leftControls = {
                 paintPane.bevelCheckbox, paintPane.formatLabel, paintPane.shadowTypeBox,
@@ -51,13 +52,13 @@ public class ComponentInitializer {
         };*/
 
 
-        Control[] topControls = {
-                paintPane.pushForwardButton, paintPane.pushToBottomButton, paintPane.layerLabel,
-                paintPane.layersChoiceBox, paintPane.showLayerRadioButton, paintPane.hideLayerRadioButton,
-                paintPane.addLayerButton, paintPane.removeLayerButton
-        };
+//        Control[] topControls = {
+//                paintPane.pushForwardButton, paintPane.pushToBottomButton, paintPane.layerLabel,
+//                paintPane.layersChoiceBox, paintPane.showLayerRadioButton, paintPane.hideLayerRadioButton,
+//                paintPane.addLayerButton, paintPane.removeLayerButton
+//        };
 
-        topButtonsBox.getChildren().addAll(topControls);
+//        topButtonsBox.getChildren().addAll(topControls);
        // rightButtonsBox.getChildren().addAll(rightControls);
        //leftButtonsBox.getChildren().addAll(toolsArr);
         //leftButtonsBox.getChildren().addAll(leftControls);
@@ -65,10 +66,10 @@ public class ComponentInitializer {
 
 
         // Style and position boxes
-        topButtonsBox.setPadding(new Insets(5));
-        topButtonsBox.setStyle("-fx-background-color: #999");
-        topButtonsBox.setPrefWidth(100);
-        topButtonsBox.setAlignment(Pos.CENTER);
+//        topButtonsBox.setPadding(new Insets(5));
+//        topButtonsBox.setStyle("-fx-background-color: #999");
+//        topButtonsBox.setPrefWidth(100);
+//        topButtonsBox.setAlignment(Pos.CENTER);
 
 
 /*
@@ -81,8 +82,8 @@ public class ComponentInitializer {
         rightButtonsBox.setPrefWidth(100);*/
 
         // Set up radio buttons for show/hide layer toggle
-        paintPane.showLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
-        paintPane.hideLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
+//        paintPane.showLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
+//        paintPane.hideLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
         // Set up events
      //   paintPane.shadowTypeBox.setOnAction(componentEvents::onShadowChoiceBoxSelection);
 
@@ -107,13 +108,13 @@ public class ComponentInitializer {
 
 
  */
-        paintPane.layersChoiceBox.setOnAction(componentEvents::onLayerSelection);
-        paintPane.showLayerRadioButton.setOnAction(componentEvents::showToggle);
-        paintPane.hideLayerRadioButton.setOnAction(componentEvents::hideToggle);
-        paintPane.addLayerButton.setOnAction(componentEvents::createLayer);
-        paintPane.removeLayerButton.setOnAction(componentEvents::removeLayer);
-        paintPane.pushForwardButton.setOnAction(componentEvents::pushForward);
-        paintPane.pushToBottomButton.setOnAction(componentEvents::pushToBottom);
+//        paintPane.layersChoiceBox.setOnAction(componentEvents::onLayerSelection);
+//        paintPane.showLayerRadioButton.setOnAction(componentEvents::showToggle);
+//        paintPane.hideLayerRadioButton.setOnAction(componentEvents::hideToggle);
+//        paintPane.addLayerButton.setOnAction(componentEvents::createLayer);
+//        paintPane.removeLayerButton.setOnAction(componentEvents::removeLayer);
+//        paintPane.pushForwardButton.setOnAction(componentEvents::pushForward);
+//        paintPane.pushToBottomButton.setOnAction(componentEvents::pushToBottom);
 
 
         // Set up layout
@@ -121,15 +122,5 @@ public class ComponentInitializer {
         paintPane.setTop(topButtonsBox);
         paintPane.setCenter(paintPane.canvas);
        // paintPane.setRight(rightButtonsBox);
-
-
-        // Creates the first 3 layers
-        componentEvents.createLayer();
-        componentEvents.createLayer();
-        componentEvents.createLayer();
-        paintPane.layersChoiceBox.setValue("Capa 1");
-
-        // Set up Hide and Show Layer Radio Buttons
-        componentEvents.updateRadioButtons();
     }
 }

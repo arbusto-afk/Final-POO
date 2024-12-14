@@ -5,6 +5,7 @@
 	import frontend.Events.CanvasEvents;
 	import frontend.Events.LeftVBoxEvents;
 	import frontend.Events.RightVBoxEvents;
+	import frontend.topButtonsBox;
 	import javafx.scene.canvas.Canvas;
 	import javafx.scene.canvas.GraphicsContext;
 	import javafx.scene.control.*;
@@ -55,15 +56,15 @@
 		Button divideButton = new Button("Dividir");*/
 
 		//Barra superior
-		Button pushForwardButton = new Button ("Traer al frente");
-		Button pushToBottomButton = new Button ("Enviar al fondo");
-		Label layerLabel = new Label("Capas");
-		ChoiceBox<String> layersChoiceBox = new ChoiceBox<>();
-		RadioButton showLayerRadioButton = new RadioButton("Mostrar");
-		RadioButton hideLayerRadioButton = new RadioButton("Ocultar");
-		ToggleGroup showHideToggle = new ToggleGroup();	// Para que solo se pueda seleccionar uno
-		Button addLayerButton = new Button("Agregar capa");
-		Button removeLayerButton = new Button("Eliminar capa");
+//		Button pushForwardButton = new Button ("Traer al frente");
+//		Button pushToBottomButton = new Button ("Enviar al fondo");
+//		Label layerLabel = new Label("Capas");
+//		ChoiceBox<String> layersChoiceBox = new ChoiceBox<>();
+//		RadioButton showLayerRadioButton = new RadioButton("Mostrar");
+//		RadioButton hideLayerRadioButton = new RadioButton("Ocultar");
+//		ToggleGroup showHideToggle = new ToggleGroup();	// Para que solo se pueda seleccionar uno
+//		Button addLayerButton = new Button("Agregar capa");
+//		Button removeLayerButton = new Button("Eliminar capa");
 
 		// Dibujar una figura
 		Point startPoint;
