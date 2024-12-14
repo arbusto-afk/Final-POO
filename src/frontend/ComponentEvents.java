@@ -42,7 +42,7 @@ public class ComponentEvents {
        // paintPane.copiedFigure = paintPane.selectedFigure;
        // paintPane.copiedColors = paintPane.selectedFigure.getColors();
     }
-
+/*
     public void onTurnButtonClick(ActionEvent event) {
        cs.forEachSelectedFigure(Figure::turnRight);
        dt.redrawCanvas();
@@ -73,14 +73,14 @@ public class ComponentEvents {
             }
         });
         dt.redrawCanvas();
-    }
+    }/*
 
     public void showToggle(ActionEvent event) {
       /*  if (paintPane.showLayerRadioButton.isSelected()) {
             paintPane.canvasState.showLayer();
         }
         paintPane.redrawCanvas();
-    */}
+    }*/
 
     public void hideToggle(ActionEvent event) {
     /*    if (paintPane.hideLayerRadioButton.isSelected()) {

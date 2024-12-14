@@ -4,6 +4,7 @@
 	import backend.model.*;
 	import frontend.Events.CanvasEvents;
 	import frontend.Events.LeftVBoxEvents;
+	import frontend.Events.RightVBoxEvents;
 	import javafx.scene.canvas.Canvas;
 	import javafx.scene.canvas.GraphicsContext;
 	import javafx.scene.control.*;
@@ -44,13 +45,14 @@
 	//		final ColorPicker[] colorPickers = {fillColorPicker, fillSecondaryColorPicker};
 
 		//Barra lateral derecha
-		Button copyFormatButton = new Button("Copiar formato");
+		/*
+
 		Label actionLabel = new Label("Acciones");
 		Button turnButton = new Button("Girar D");
 		Button flipHorizontalButton = new Button("Voltear H");
 		Button flipVerticalButton = new Button("Voltear v");
 		Button duplicateButton = new Button("Duplicar");
-		Button divideButton = new Button("Dividir");
+		Button divideButton = new Button("Dividir");*/
 
 		//Barra superior
 		Button pushForwardButton = new Button ("Traer al frente");
@@ -78,6 +80,9 @@
 			drawingTool = new DrawingTool(canvas, canvasState, this);
 			LeftVBoxEvents test1 = new LeftVBoxEvents(drawingTool);
 			this.setLeft(test1);
+			RightVBoxEvents test2 = new RightVBoxEvents(drawingTool);
+			this.setLeft(test2);
+
 			componentInitializer.initializePaintPane(this, canvasState, statusPane, drawingTool);
 		}
 	}

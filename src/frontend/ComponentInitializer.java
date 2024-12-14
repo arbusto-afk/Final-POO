@@ -30,16 +30,27 @@ public class ComponentInitializer {
 
         // Set up left buttons box
     //    VBox leftButtonsBox = new VBox(10);
-        VBox rightButtonsBox = new VBox(10);
+      //  VBox rightButtonsBox = new VBox(10);
         HBox topButtonsBox = new HBox(10);
+
     /*    Control[] leftControls = {
                 paintPane.bevelCheckbox, paintPane.formatLabel, paintPane.shadowTypeBox,
                 paintPane.fillColorPicker, paintPane.fillSecondaryColorPicker, paintPane.copyFormatButton
-        };*/
-        Control[] rightControls = {
-                paintPane.actionLabel, paintPane.turnButton, paintPane.flipHorizontalButton,
-                paintPane.flipVerticalButton, paintPane.duplicateButton, paintPane.divideButton
         };
+
+        Label actionLabel = new Label("Acciones");
+        Button turnButton = new Button("Girar D");
+        Button flipHorizontalButton = new Button("Voltear H");
+        Button flipVerticalButton = new Button("Voltear v");
+        Button duplicateButton = new Button("Duplicar");
+        Button divideButton = new Button("Dividir");
+
+       Control[] rightControls = {
+             actionLabel, paintPane.turnButton, paintPane.flipHorizontalButton,
+                paintPane.flipVerticalButton, paintPane.duplicateButton, paintPane.divideButton
+        };*/
+
+
         Control[] topControls = {
                 paintPane.pushForwardButton, paintPane.pushToBottomButton, paintPane.layerLabel,
                 paintPane.layersChoiceBox, paintPane.showLayerRadioButton, paintPane.hideLayerRadioButton,
@@ -47,7 +58,7 @@ public class ComponentInitializer {
         };
 
         topButtonsBox.getChildren().addAll(topControls);
-        rightButtonsBox.getChildren().addAll(rightControls);
+       // rightButtonsBox.getChildren().addAll(rightControls);
        //leftButtonsBox.getChildren().addAll(toolsArr);
         //leftButtonsBox.getChildren().addAll(leftControls);
 
@@ -65,9 +76,9 @@ public class ComponentInitializer {
         leftButtonsBox.setStyle("-fx-background-color: #999");
         leftButtonsBox.setPrefWidth(100);
 */
-        rightButtonsBox.setPadding(new Insets(5));
+       /* rightButtonsBox.setPadding(new Insets(5));
         rightButtonsBox.setStyle("-fx-background-color: #999");
-        rightButtonsBox.setPrefWidth(100);
+        rightButtonsBox.setPrefWidth(100);*/
 
         // Set up radio buttons for show/hide layer toggle
         paintPane.showLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
@@ -79,7 +90,7 @@ public class ComponentInitializer {
         ce.setupCanvas(paintPane.canvas);
 
 
-
+/*
        // paintPane.deleteButton.setOnAction(componentEvents::onDeleteButtonClick);
         paintPane.copyFormatButton.setOnAction(componentEvents::onCopyFormatButtonClick);
         paintPane.turnButton.setOnAction(componentEvents::onTurnButtonClick);
@@ -93,6 +104,9 @@ public class ComponentInitializer {
                 throw new RuntimeException(e);
             }
         });
+
+
+ */
         paintPane.layersChoiceBox.setOnAction(componentEvents::onLayerSelection);
         paintPane.showLayerRadioButton.setOnAction(componentEvents::showToggle);
         paintPane.hideLayerRadioButton.setOnAction(componentEvents::hideToggle);
@@ -106,7 +120,7 @@ public class ComponentInitializer {
      //   paintPane.setLeft(leftButtonsBox);
         paintPane.setTop(topButtonsBox);
         paintPane.setCenter(paintPane.canvas);
-        paintPane.setRight(rightButtonsBox);
+       // paintPane.setRight(rightButtonsBox);
 
 
         // Creates the first 3 layers
