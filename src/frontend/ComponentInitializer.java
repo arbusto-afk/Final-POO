@@ -4,6 +4,7 @@ import backend.CanvasState;
 import backend.FigureNotFoundException;
 import backend.model.*;
 import frontend.Events.CanvasEvents;
+import frontend.Events.LeftVBoxEvents;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -15,7 +16,7 @@ public class ComponentInitializer {
 
     public void initializePaintPane(PaintPane paintPane, CanvasState canvasState, StatusPane statusPane, DrawingTool dt) {
         ComponentEvents componentEvents = new ComponentEvents(paintPane, dt);
-
+/*
         // Initialize ToggleButtons
         ToggleButton[] toolsArr = {
                 paintPane.selectionButton, paintPane.rectangleButton, paintPane.circleButton,
@@ -25,16 +26,16 @@ public class ComponentInitializer {
             tool.setMinWidth(90);
             tool.setToggleGroup(paintPane.tools);
             tool.setCursor(Cursor.HAND);
-        }
+        }*/
 
         // Set up left buttons box
-        VBox leftButtonsBox = new VBox(10);
+    //    VBox leftButtonsBox = new VBox(10);
         VBox rightButtonsBox = new VBox(10);
         HBox topButtonsBox = new HBox(10);
-        Control[] leftControls = {
+    /*    Control[] leftControls = {
                 paintPane.bevelCheckbox, paintPane.formatLabel, paintPane.shadowTypeBox,
                 paintPane.fillColorPicker, paintPane.fillSecondaryColorPicker, paintPane.copyFormatButton
-        };
+        };*/
         Control[] rightControls = {
                 paintPane.actionLabel, paintPane.turnButton, paintPane.flipHorizontalButton,
                 paintPane.flipVerticalButton, paintPane.duplicateButton, paintPane.divideButton
@@ -47,12 +48,9 @@ public class ComponentInitializer {
 
         topButtonsBox.getChildren().addAll(topControls);
         rightButtonsBox.getChildren().addAll(rightControls);
-        leftButtonsBox.getChildren().addAll(toolsArr);
-        leftButtonsBox.getChildren().addAll(leftControls);
+       //leftButtonsBox.getChildren().addAll(toolsArr);
+        //leftButtonsBox.getChildren().addAll(leftControls);
 
-        // Set up choice box
-        paintPane.shadowTypeBox.setValue(Shadow.NONE);
-        paintPane.shadowTypeBox.getItems().addAll(Shadow.values());
 
 
         // Style and position boxes
@@ -61,10 +59,12 @@ public class ComponentInitializer {
         topButtonsBox.setPrefWidth(100);
         topButtonsBox.setAlignment(Pos.CENTER);
 
+
+/*
         leftButtonsBox.setPadding(new Insets(5));
         leftButtonsBox.setStyle("-fx-background-color: #999");
         leftButtonsBox.setPrefWidth(100);
-
+*/
         rightButtonsBox.setPadding(new Insets(5));
         rightButtonsBox.setStyle("-fx-background-color: #999");
         rightButtonsBox.setPrefWidth(100);
@@ -73,14 +73,14 @@ public class ComponentInitializer {
         paintPane.showLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
         paintPane.hideLayerRadioButton.setToggleGroup(paintPane.showHideToggle);
         // Set up events
-        paintPane.shadowTypeBox.setOnAction(componentEvents::onShadowChoiceBoxSelection);
+     //   paintPane.shadowTypeBox.setOnAction(componentEvents::onShadowChoiceBoxSelection);
 
         CanvasEvents ce = new CanvasEvents(canvasState, dt);
         ce.setupCanvas(paintPane.canvas);
 
 
 
-        paintPane.deleteButton.setOnAction(componentEvents::onDeleteButtonClick);
+       // paintPane.deleteButton.setOnAction(componentEvents::onDeleteButtonClick);
         paintPane.copyFormatButton.setOnAction(componentEvents::onCopyFormatButtonClick);
         paintPane.turnButton.setOnAction(componentEvents::onTurnButtonClick);
         paintPane.flipHorizontalButton.setOnAction(componentEvents::onFlipHorizontalButtonCLick);
@@ -103,7 +103,7 @@ public class ComponentInitializer {
 
 
         // Set up layout
-        paintPane.setLeft(leftButtonsBox);
+     //   paintPane.setLeft(leftButtonsBox);
         paintPane.setTop(topButtonsBox);
         paintPane.setCenter(paintPane.canvas);
         paintPane.setRight(rightButtonsBox);

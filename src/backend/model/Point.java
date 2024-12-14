@@ -65,6 +65,17 @@ public class Point {
     public Point substractX(double x){
         return new Point(this.x - x, y);
     }
+    public boolean isInRect(Point p1, Point p2) {
+        double minX = Math.min(p1.x, p2.x);
+        double maxX = Math.max(p1.x, p2.x);
+        double minY = Math.min(p1.y, p2.y);
+        double maxY = Math.max(p1.y, p2.y);
+
+        if (this.x >= minX && this.x <= maxX && this.y >= minY && this.y <= maxY) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public String toString() {

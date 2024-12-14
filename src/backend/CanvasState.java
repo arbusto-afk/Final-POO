@@ -8,22 +8,31 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class CanvasState<T> {
+public class CanvasState {
 
     /*
     Cada layer es unica, se mantiene su orden de insercion;
      */
     private final Map<Integer, Layer> layers = new TreeMap<>();
-    private final Map<Figure, T> colorMap = new HashMap<>();
-    private List<Figure> selectedFigures;
+    //private final Map<Figure, T> colorMap = new HashMap<>();
+    private final List<Figure> selectedFigures = new ArrayList<>();
 
     private final Integer STARTINGLAYERS = 3;
-
+/*
     public void setFigureColor(Figure fig, T color){
         colorMap.put(fig, color);
     }
     public T getFigureColor(Figure fig){
         return colorMap.get(fig);
+    }
+*/
+    public Integer getFigureLayer(Figure fig) throws FigureNotFoundException {
+        for (Map.Entry<Integer, Layer> entry : layers.entrySet()) {
+            if (entry.getValue().figures().contains(fig)) {
+                return entry.getKey();
+            }
+        }
+        throw new FigureNotFoundException();
     }
 
     private Layer getOrInitializeLayer(Integer layerIndex) {
@@ -41,7 +50,6 @@ public class CanvasState<T> {
     }
     public CanvasState(){
         initializeInitialLayers(STARTINGLAYERS);
-        selectedFigures = Collections.emptyList();
     }
 
     public void addFigure(Figure figure, Integer layerIndex) {
@@ -63,6 +71,7 @@ public class CanvasState<T> {
         Layer l = getOrInitializeLayer(layerIndex);
         l.divideFigure(figure);
     }
+
 
     private List<Figure> collectFigures(boolean collectHidden) {
         List<Figure> figures = new ArrayList<>();
@@ -93,13 +102,15 @@ public class CanvasState<T> {
         return selectedFigures;
     }
     public void selectFigure(List<Figure> figureList){
-        this.selectedFigures = figureList;
+        this.selectedFigures.addAll(figureList);
     }
+    public void selectFigure(Figure fig) {   this.selectedFigures.add(fig);}
     public boolean isSelected(Figure fig) {
         return selectedFigures.contains(fig);
     }
+
     public void deselectFigures(){
-        selectedFigures = Collections.emptyList();
+        selectedFigures.clear();
     }
 
     public void forEachSelectedFigure(Consumer<Figure> action) {
@@ -110,7 +121,6 @@ public class CanvasState<T> {
             action.accept(fig);
         }
     }
-
     public void forEachVisibleFigure(Consumer<Figure> action) {
         for (Figure fig : visibleFigures()) {
             action.accept(fig);

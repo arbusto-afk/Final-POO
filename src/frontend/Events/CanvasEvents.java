@@ -10,12 +10,12 @@ import javafx.scene.input.MouseEvent;
 
 public class CanvasEvents {
 
-    private final CanvasState<?> canvasState;
+    private final CanvasState canvasState;
     private final DrawingTool drawingTool;
     private Point startPoint;
     private Point selectionDragStartOffset;
 
-    public CanvasEvents(CanvasState<?> canvasState, DrawingTool drawingTool){
+    public CanvasEvents(CanvasState canvasState, DrawingTool drawingTool){
         this.canvasState = canvasState;
         this.drawingTool = drawingTool;
 
@@ -45,7 +45,15 @@ public class CanvasEvents {
             return;
         }
         drawingTool.drawFigure(startPoint, endPoint);
+        for(Figure fig : canvasState.visibleFigures()){
+            Point topL = fig.getCenterPoint().add(fig.getWidth() / 2, fig.getHeight() / 2);
+            Point botR = topL.add(fig.getWidth(), fig.getHeight());
+            if(topL.isInRect(startPoint, endPoint) && botR.isInRect(startPoint, endPoint)){
+                canvasState.selectFigure(fig);
+            }
+        }
         startPoint = null;
+        drawingTool.redrawCanvas();
     }
     //TODO
     private void onMouseMoved(MouseEvent event) {
@@ -97,6 +105,8 @@ public class CanvasEvents {
         }*/
     }
 
+
+    //todo not move only first
     public void onMouseDragged(MouseEvent event) {
         Point eventPoint = new Point(event.getX(), event.getY());
        /* if(!canvasState.selectedFigures().isEmpty()){

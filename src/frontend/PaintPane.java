@@ -3,6 +3,7 @@
 	import backend.CanvasState;
 	import backend.model.*;
 	import frontend.Events.CanvasEvents;
+	import frontend.Events.LeftVBoxEvents;
 	import javafx.scene.canvas.Canvas;
 	import javafx.scene.canvas.GraphicsContext;
 	import javafx.scene.control.*;
@@ -14,16 +15,13 @@
 	public class PaintPane extends BorderPane {
 
 		ComponentInitializer componentInitializer = new ComponentInitializer();
-		// BackEnd
-		CanvasState<Paint> canvasState;
+		CanvasState canvasState;
 	
-		// Canvas y relacionados
 		Canvas canvas = new Canvas(800, 600);
-		GraphicsContext gc = canvas.getGraphicsContext2D();
 
 		Color defaultFillColor = Color.YELLOW;
 		Color defaultSecondaryFillColor = Color.ORANGE;
-	
+	/*
 		// Botones Barra Izquierda
 		static final String rectangleText = "Rectángulo";
 		static final String squareText = "Cuadrado";
@@ -38,12 +36,12 @@
 		Label formatLabel = new Label("Formato:");
 		ChoiceBox<Shadow> shadowTypeBox = new ChoiceBox<>();
 		CheckBox bevelCheckbox = new CheckBox("Biselado");
-
+*/
 		// Selector de color de relleno
-		ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
-		ColorPicker fillSecondaryColorPicker = new ColorPicker(defaultSecondaryFillColor);
+	//	ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
+	//	ColorPicker fillSecondaryColorPicker = new ColorPicker(defaultSecondaryFillColor);
 		//calculate shape gradient only from these color Picker
-			final ColorPicker[] colorPickers = {fillColorPicker, fillSecondaryColorPicker};
+	//		final ColorPicker[] colorPickers = {fillColorPicker, fillSecondaryColorPicker};
 
 		//Barra lateral derecha
 		Button copyFormatButton = new Button("Copiar formato");
@@ -67,12 +65,6 @@
 
 		// Dibujar una figura
 		Point startPoint;
-		Point selectionDragStartOffset;
-		// Seleccionar una figura
-		Figure selectedFigure;
-		Figure copiedFigure;
-		List<Color> copiedColors;
-
 		// StatusBar
 		StatusPane statusPane;
 
@@ -83,17 +75,9 @@
         public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 			this.canvasState = canvasState;
 			this.statusPane = statusPane;
-			drawingTool = new DrawingTool(gc, canvasState, this);
-					componentInitializer.initializePaintPane(this, canvasState, statusPane, drawingTool);
+			drawingTool = new DrawingTool(canvas, canvasState, this);
+			LeftVBoxEvents test1 = new LeftVBoxEvents(drawingTool);
+			this.setLeft(test1);
+			componentInitializer.initializePaintPane(this, canvasState, statusPane, drawingTool);
 		}
-
-
-
-		/*
-		*
-		*
-		*
-		*
-		 */
-
 	}

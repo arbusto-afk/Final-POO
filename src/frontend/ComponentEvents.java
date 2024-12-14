@@ -15,7 +15,7 @@ public class ComponentEvents {
     private final PaintPane paintPane;
 
     private final DrawingTool dt;
-    private final CanvasState<?> cs;
+    private final CanvasState cs;
 
     public ComponentEvents(PaintPane paintPane, DrawingTool dt) {
 
@@ -24,10 +24,6 @@ public class ComponentEvents {
         this.cs = paintPane.canvasState;
     }
 
-    public void onShadowChoiceBoxSelection(ActionEvent event) {
-            cs.forEachSelectedFigure(fig -> fig.setShadeType(paintPane.shadowTypeBox.getValue()));
-            dt.redrawCanvas();
-    }
 
     //todo fix
     public void onDeleteButtonClick(ActionEvent event) {
@@ -41,8 +37,8 @@ public class ComponentEvents {
     }
 
     public void onCopyFormatButtonClick(ActionEvent event) {
-        if (paintPane.selectedFigure == null)
-            return;
+       // if (paintPane.selectedFigure == null)
+         //   return;
        // paintPane.copiedFigure = paintPane.selectedFigure;
        // paintPane.copiedColors = paintPane.selectedFigure.getColors();
     }
@@ -77,14 +73,6 @@ public class ComponentEvents {
             }
         });
         dt.redrawCanvas();
-    }
-
-    private List<Color> colorListFromColorPickerArr(ColorPicker[] arr) {
-        List<Color> res = new ArrayList<>();
-        for (ColorPicker p : arr) {
-            res.add(p.getValue());
-        }
-        return res;
     }
 
     public void showToggle(ActionEvent event) {
