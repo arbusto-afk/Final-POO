@@ -1,6 +1,4 @@
 package frontend.Events;
-
-import backend.FigureNotFoundException;
 import backend.model.Figure;
 import backend.model.Shadow;
 import frontend.DrawingTool.DrawingMode;
@@ -32,14 +30,10 @@ public class LeftVBox extends VBox {
     CheckBox bevelCheckbox = new CheckBox("Biselado");
     ColorPicker fillColorPicker = new ColorPicker(defaultFillColor);
     ColorPicker fillSecondaryColorPicker = new ColorPicker(defaultSecondaryFillColor);
-    //calculate shape gradient only from these color Picker
-    final ColorPicker[] colorPickers = {fillColorPicker, fillSecondaryColorPicker};
     Button copyFormatButton = new Button("Copiar formato");
 
 
     private Figure copiedFigure;
-
-    private final ToggleGroup tools = new ToggleGroup();
 
     public LeftVBox(DrawingTool drawingTool){
 
@@ -52,6 +46,7 @@ public class LeftVBox extends VBox {
                 selectionButton, rectangleButton, circleButton,
                 squareButton, ellipseButton, deleteButton
         };
+        ToggleGroup tools = new ToggleGroup();
         for (ToggleButton tool : toolsArr) {
             tool.setToggleGroup(tools);
             tool.setCursor(Cursor.HAND);
@@ -69,26 +64,29 @@ public class LeftVBox extends VBox {
         shadowTypeBox.setValue(Shadow.NONE);
         shadowTypeBox.getItems().addAll(Shadow.values());
 
-        selectionButton.setOnAction(e-> drawingTool.setDrawingMode(DrawingMode.NONE));
+        selectionButton.setOnAction(e->{
+            drawingTool.setDrawingMode(DrawingMode.NONE);
+            //todo remove this
+            drawingTool.setSelectionOn(selectionButton.isSelected());
+        }
+        );
         rectangleButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.RECT));
         squareButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.SQUARE));
         circleButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.CIRCLE));
         ellipseButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.ELLIPSE));
-        tools.selectedToggleProperty().addListener((obs,oldToggle,newToggle) -> {
+        tools.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
             if(newToggle == null) {
                 drawingTool.setDrawingMode(DrawingMode.NONE);
             }
+            //todo remove this
+            drawingTool.setSelectionOn(selectionButton.isSelected());
         });
-     //   deleteButton.setOnAction(e -> canvasState.forEachSelectedFigure(canvasState.deleteFigure();));
 
         deleteButton.setOnAction(e -> {
             for(Figure fig : drawingTool.getCanvasState().selectedFigures()) {
-                try {
                     drawingTool.getCanvasState().deleteFigure(fig, drawingTool.getCanvasState().getFigureLayer(fig));
-                } catch (FigureNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
             }
+            drawingTool.getCanvasState().deselectFigures();
             drawingTool.redrawCanvas();
             });
 
@@ -96,14 +94,14 @@ public class LeftVBox extends VBox {
                     for (Figure fig : drawingTool.getCanvasState().selectedFigures()) {
                         fig.setHasBevel(bevelCheckbox.isSelected());
                     }
-               //     drawingTool.setBevelOn(bevelCheckbox.isSelected());
+                    drawingTool.setFigToDrawHasBevel(bevelCheckbox.isSelected());
                     drawingTool.redrawCanvas();
                 });
         shadowTypeBox.setOnAction(e ->{
                 for(Figure fig : drawingTool.getCanvasState().selectedFigures()) {
                     fig.setShadeType(shadowTypeBox.getValue());
                 }
-          //      drawingTool.setShadowType(shadowTypeBox.getValue());
+                drawingTool.setFigToDrawShadowType(shadowTypeBox.getValue());
                 drawingTool.redrawCanvas();
         });
         //todo copy format (cast radial to lineargradient) and viceversa
@@ -111,12 +109,14 @@ public class LeftVBox extends VBox {
         copyFormatButton.setOnAction(e -> {
             if(copiedFigure != null) {
                 for (Figure fig : drawingTool.getCanvasState().selectedFigures()) {
-                    fig.setHasBevel(bevelCheckbox.isSelected());
-                    fig.setShadeType(shadowTypeBox.getValue());
-                    drawingTool.setFigureColor(fig, drawingTool.getFigureColor(fig));
+                    fig.setHasBevel(copiedFigure.getHasBevel());
+                    fig.setShadeType(copiedFigure.getShadeType());
+                    //todo fix this
+                    drawingTool.setFigureColor(fig, Color.PINK);
                 }
                 copiedFigure = null;
             }
+            //todo here what to do hay que definir como interpretar este caso particular
             if(!drawingTool.getCanvasState().selectedFigures().isEmpty()){
                 copiedFigure = drawingTool.getCanvasState().selectedFigures().getFirst();
             }
@@ -124,9 +124,17 @@ public class LeftVBox extends VBox {
 
         fillColorPicker.setOnAction(e -> {
             drawingTool.setStartColor(fillColorPicker.getValue());
+            for (Figure fig : drawingTool.getCanvasState().selectedFigures()) {
+                drawingTool.setFigureColor(fig, drawingTool.getGradientForFigure(fig, drawingTool.getStartColor(), drawingTool.getEndColor()));
+            }
+            drawingTool.redrawCanvas();
         });
         fillSecondaryColorPicker.setOnAction(e -> {
             drawingTool.setEndColor(fillSecondaryColorPicker.getValue());
+            for (Figure fig : drawingTool.getCanvasState().selectedFigures()) {
+                drawingTool.setFigureColor(fig, drawingTool.getGradientForFigure(fig, drawingTool.getStartColor(), drawingTool.getEndColor()));
+            }
+            drawingTool.redrawCanvas();
         });
 
 

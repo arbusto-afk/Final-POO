@@ -17,7 +17,22 @@ public class DrawingTool {
     private final CanvasState canvasState;
     //todo Map<Figure, Tuple<Paint, DrawingMode>
     private final Map<Figure, Paint> cStateColorMap = new HashMap<>();
+    //todo enumMap
     private final Map<Figure, DrawingMode> drawModeMap = new HashMap<>();
+
+    //todo remove this bool and set as appropiate
+    private boolean selectionOn = false;
+
+    public boolean isSelectionOn() {
+        return selectionOn;
+    }
+
+    public void setSelectionOn(boolean selectionOn) {
+        this.selectionOn = selectionOn;
+    }
+    public Paint getGradientForFigure(Figure fig, Color c1, Color c2){
+        return drawModeMap.get(fig).getGradient(c1, c2);
+    }
 
     public void setFigureColor(Figure fig, Paint p){
         cStateColorMap.remove(fig);
@@ -41,6 +56,8 @@ public class DrawingTool {
         gc.setLineWidth(drawingMode.getDefaultWidth());
         this.startColor = defaultStartColor;
         this.endColor = defaultEndColor;
+        this.figToDrawHasBevel = false;
+        this.figToDrawShadowType = Shadow.NONE;
     }
 
     private DrawingMode drawingMode;
@@ -94,7 +111,6 @@ public class DrawingTool {
         cStateColorMap.put(fig, p);
         drawModeMap.put(fig, drawingMode);
         canvasState.addFigure(fig, 1);
-        pp.startPoint = null;
         redrawCanvas();
     }
 

@@ -12,8 +12,6 @@ import javafx.scene.control.Button;
 
 public class RightVBox extends VBox {
 
-    private  DrawingTool dt;
-    private  CanvasState cs;
 
     final String rotateDtext = "Girar D";
     final String flipHtext =  "Voltear H";
@@ -42,29 +40,52 @@ public RightVBox(DrawingTool drawingTool){
     };
     this.getChildren().addAll(rightControls);
 
-
+/*
+todo these events i dont know a clear separation of individual figures instances and canvas state
+todo for example divide in cs, but turn in fig instance
+    */
     turnButton.setOnAction(e-> {
-            cs.forEachSelectedFigure(Figure::turnRight);
-    dt.redrawCanvas();} );
+        CanvasState cs = drawingTool.getCanvasState();
+        for(Figure fig : cs.selectedFigures()){
+            fig.turnRight();
+        }
+        drawingTool.redrawCanvas();
+    });
 
-    flipHorizontalButton.setOnAction(e->{ cs.forEachSelectedFigure(Figure::flipHorizontal);
-        dt.redrawCanvas(); });
+    flipHorizontalButton.setOnAction(e->{
+        CanvasState cs = drawingTool.getCanvasState();
+        for(Figure fig : cs.selectedFigures()){
+            fig.flipHorizontal();
+        }
+        drawingTool.redrawCanvas();
+         });
 
-    flipVerticalButton.setOnAction(e->{cs.forEachSelectedFigure(Figure::flipVertical);
-        dt.redrawCanvas();} );
+    flipVerticalButton.setOnAction(e->{
+        CanvasState cs = drawingTool.getCanvasState();
+        for(Figure fig : cs.selectedFigures()){
+           fig.flipVertical();
+        }
+        drawingTool.redrawCanvas();
+    });
 
-    duplicateButton.setOnAction(e-> { cs.forEachSelectedFigure(figure -> figure.duplicate(15));
-        dt.redrawCanvas();} );
+    duplicateButton.setOnAction(e-> {
+        //todo
+        //todo Magic NUMBER
+        CanvasState cs = drawingTool.getCanvasState();
+        for(Figure fig : cs.selectedFigures()){
+            cs.addFigure(fig.duplicate(15), cs.getFigureLayer(fig));
+        }
+        drawingTool.redrawCanvas();
+    } );
 
    divideButton.setOnAction(event -> {
-       cs.forEachSelectedFigure(fig -> {
-           try {
-               cs.divideFigure(fig, 1);
-           } catch (FigureNotFoundException e) {
-               throw new RuntimeException(e);
-           }
-       });
-       dt.redrawCanvas();
+       //todo
+       CanvasState cs = drawingTool.getCanvasState();
+       for(Figure fig : cs.selectedFigures()){
+          cs.divideFigure(fig, cs.getFigureLayer(fig));
+       }
+       drawingTool.redrawCanvas();
+
     });
 }
 

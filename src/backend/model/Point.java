@@ -37,27 +37,27 @@ public class Point {
         return new Point(y, x);
     }
 
-    public Point add(Point p) {
-        return new Point(
-                this.x + p.getX(),
-                this.y + p.getY()
-        );
-    }
+
     public Point add(double x, double y) {
         return new Point(this.x + x, this.y + y);
     }
     public Point add(double val) {
         return add(val,val);
     }
+    public Point add(Point p) {
+        return  this.add(p.x, p.y);
+    }
 
     public Point addX(double x) {
-        return new Point(this.x + x, this.y );
+        return this.add(x, 0);
     }
     public Point addY(double y) {
-        return new Point(this.x , this.y+y);
-
+        return this.add(0 , y );
     }
 
+    public Point substract(double x, double y) {
+        return this.add(-x, -y);
+    }
     public Point substract(Point p){
         return new Point(x - p.x, y - p.y);
     }

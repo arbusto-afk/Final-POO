@@ -38,7 +38,6 @@ public class FigureCanvas extends Canvas {
         }
     }
     private void onMouseRelease(MouseEvent event) {
-        System.out.println("Sus");
         if (startPoint == null) {
             return;
         }
@@ -47,11 +46,15 @@ public class FigureCanvas extends Canvas {
             return;
         }
         drawingTool.drawFigure(startPoint, endPoint);
-        for(Figure fig : canvasState.visibleFigures()){
-            Point topL = fig.getCenterPoint().add(fig.getWidth() / 2, fig.getHeight() / 2);
-            Point botR = topL.add(fig.getWidth(), fig.getHeight());
-            if(topL.isInRect(startPoint, endPoint) && botR.isInRect(startPoint, endPoint)){
-                canvasState.selectFigure(fig);
+
+        //todo properly validate bool
+        if(drawingTool.isSelectionOn()) {
+            for (Figure fig : canvasState.visibleFigures()) {
+                Point topL = fig.getCenterPoint().substract(fig.getWidth() / 2, fig.getHeight() / 2);
+                Point botR = fig.getCenterPoint().add(fig.getWidth() / 2, fig.getHeight() / 2);
+                if (topL.isInRect(startPoint, endPoint) && botR.isInRect(startPoint, endPoint)) {
+                    canvasState.selectFigure(fig);
+                }
             }
         }
         startPoint = null;
