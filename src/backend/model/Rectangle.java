@@ -5,9 +5,6 @@
     import java.awt.*;
     public class Rectangle extends Figure {
 
-        private Point topLeft;
-        private Point bottomRight;
-
         public Rectangle(Point topLeft, Point bottomRight, Shadow shadeType, boolean hasBevel) {
             super(
                     shadeType,
@@ -16,8 +13,6 @@
                     bottomRight.y - topLeft.y,
                     hasBevel
             );
-            this.topLeft = topLeft;
-            this.bottomRight = bottomRight;
         }
 
         @Override
@@ -32,26 +27,9 @@
                     p.getY() > this.getTopLeft().getY() &&
                     p.getY() < this.getBottomRight().getY();
         }
-
-        public Point getTopLeft() { return topLeft; }
-        public Point getBottomRight() { return bottomRight; }
-
-        @Override
-        public Figure move(Point newCenter){
-            Point topLeftOffset = getTopLeft().getDifference(getCenterPoint());
-            Point botRightOffset = getBottomRight().getDifference(getCenterPoint());
-            this.topLeft = newCenter.add(topLeftOffset);
-            this.bottomRight = newCenter.add(botRightOffset);
-            return super.move(newCenter);
-        }
-
         public void turnRight() {
-            Point newCornersOffset = new Point(getHeight() / 2, getWidth() / 2);
-            this.topLeft = getCenterPoint().substract(newCornersOffset);
-            this.bottomRight = getCenterPoint().add(newCornersOffset);
             this.resize(getHeight(), getWidth());
         }
-
 
         public Rectangle duplicate(Integer offset){
             return new Rectangle(
@@ -60,13 +38,4 @@
                     getShadeType(),
                     getHasBevel());
         }
-
-        @Override
-        public void resize(double width, double height){
-            super.resize(width, height);
-            Point cornerOffset = new Point(getWidth() / 2, getHeight() / 2);
-            this.topLeft = getCenterPoint().substract(cornerOffset);
-            this.bottomRight = getCenterPoint().add(cornerOffset);
-        }
-
     }

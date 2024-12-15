@@ -19,7 +19,7 @@ public class Ellipse extends Figure {
     public void turnRight() {
         resize(getHeight(), getWidth());
     }
- public Ellipse duplicate(Integer offset){
+    public Ellipse duplicate(Integer offset){
             return new Ellipse(getCenterPoint().add(offset), getWidth(), getHeight(), getShadeType(), getHasBevel());
         }
 
