@@ -33,9 +33,9 @@ public class FigureCanvas extends Canvas {
     private void onMousePressed(MouseEvent event) {
         Point eventPoint = new Point(event.getX(), event.getY());
         startPoint = eventPoint;
-        if (!canvasState.selectedFigures().isEmpty() && selectionDragStartOffset == null) {
+        /*if (!canvasState.selectedFigures().isEmpty() && selectionDragStartOffset == null) {
             selectionDragStartOffset = canvasState.selectedFigures().getFirst().getCenterPoint().getDifference(eventPoint);
-        }
+        }*/
     }
     private void onMouseRelease(MouseEvent event) {
         if (startPoint == null) {
@@ -119,11 +119,11 @@ public class FigureCanvas extends Canvas {
                 Point newCenter = eventPoint;
                 fig.move(newCenter);
             }
-        }*/
+        }*//*
         if (!canvasState.selectedFigures().isEmpty()) {
             canvasState.selectedFigures().getFirst().move(eventPoint.add(selectionDragStartOffset));
             drawingTool.redrawCanvas();
-        }
+        }*/
     }
 
 

@@ -73,7 +73,9 @@ todo for example divide in cs, but turn in fig instance
         //todo Magic NUMBER
         CanvasState cs = drawingTool.getCanvasState();
         for(Figure fig : cs.selectedFigures()){
-            cs.addFigure(fig.duplicate(15), cs.getFigureLayer(fig));
+            Figure dupl = fig.duplicate(cs.getDUPLICATEOFFSET());
+            cs.addFigure(dupl, cs.getFigureLayer(fig));
+        //    drawingTool.
         }
         drawingTool.redrawCanvas();
     } );

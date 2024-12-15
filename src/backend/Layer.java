@@ -21,12 +21,13 @@ public class Layer implements Iterable<Figure> {
 
     public void addFigure(Figure figure) { figures.add(figure); }
 
-    public void removeFigure(Figure figure) throws FigureNotFoundException {
+
+    public void removeFigure(Figure figure) {
         if(!figures.contains(figure))
             throw new FigureNotFoundException();
         figures.remove(figure);
     }
-    public void divideFigure(Figure figure) throws FigureNotFoundException {
+    public void divideFigure(Figure figure) {
         if(!figures.contains(figure))
            throw new FigureNotFoundException();
 
@@ -38,11 +39,11 @@ public class Layer implements Iterable<Figure> {
         addFigure(figure.duplicate(0).move(rightCenter));
     }
 
-    public void sendToBack(Figure figure) throws FigureNotFoundException {
+    public void sendToBack(Figure figure) {
         removeFigure(figure);
         figures.addFirst(figure);
     }
-    public void pushToFront(Figure figure) throws FigureNotFoundException {
+    public void pushToFront(Figure figure) {
         removeFigure(figure);
         figures.addLast(figure);
     }

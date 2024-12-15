@@ -94,14 +94,14 @@ public class LeftVBox extends VBox {
                     for (Figure fig : drawingTool.getCanvasState().selectedFigures()) {
                         fig.setHasBevel(bevelCheckbox.isSelected());
                     }
-                    drawingTool.setFigToDrawHasBevel(bevelCheckbox.isSelected());
+                    drawingTool.setBevel(bevelCheckbox.isSelected());
                     drawingTool.redrawCanvas();
                 });
         shadowTypeBox.setOnAction(e ->{
                 for(Figure fig : drawingTool.getCanvasState().selectedFigures()) {
                     fig.setShadeType(shadowTypeBox.getValue());
                 }
-                drawingTool.setFigToDrawShadowType(shadowTypeBox.getValue());
+                drawingTool.setShadowType(shadowTypeBox.getValue());
                 drawingTool.redrawCanvas();
         });
         //todo copy format (cast radial to lineargradient) and viceversa
@@ -116,10 +116,11 @@ public class LeftVBox extends VBox {
                 }
                 copiedFigure = null;
             }
+
             //todo here what to do hay que definir como interpretar este caso particular
-            if(!drawingTool.getCanvasState().selectedFigures().isEmpty()){
+        /*    if(!drawingTool.getCanvasState().selectedFigures().isEmpty()){
                 copiedFigure = drawingTool.getCanvasState().selectedFigures().getFirst();
-            }
+            }*/
         });
 
         fillColorPicker.setOnAction(e -> {

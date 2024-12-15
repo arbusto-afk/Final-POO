@@ -1,6 +1,7 @@
 package frontend.Events;
 
 import backend.CanvasState;
+import backend.Layer;
 import frontend.DrawingTool.DrawingTool;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -34,9 +35,10 @@ public class TopHBox extends HBox {
 
 
 
-    public TopHBox(int inset) {
+    public TopHBox(int inset, DrawingTool dt) {
         super(inset);
 
+        this.dt = dt;
         // Style
         setPadding(new Insets(5));
         setStyle("-fx-background-color: #999");
@@ -72,7 +74,7 @@ public class TopHBox extends HBox {
         layersChoiceBox.setValue("Capa 1");
 
         // Set up Hide and Show Layer Radio Buttons
-        updateRadioButtons();
+        updateRadioButtons(1);
     }
 
     private void createLayer(ActionEvent event) {
@@ -117,17 +119,16 @@ public class TopHBox extends HBox {
 //        }
 //        paintPane.redrawCanvas();
     }
-
+    Integer selectedLayer;
     private void onLayerSelection(ActionEvent event) {
-      /*  paintPane.canvasState.changeLayer(paintPane.layersChoiceBox.getValue());
-        updateRadioButtons();
-        paintPane.redrawCanvas();
-    */}
+        //.canvasState.changeLayer(layersChoiceBox.getValue());
+    //    updateRadioButtons();
+      //  paintPane.redrawCanvas();
+    }
 
-    private void updateRadioButtons(){
-      /*  paintPane.hideLayerRadioButton.setSelected(!paintPane.canvasState.isVisible());
-        paintPane.showLayerRadioButton.setSelected(paintPane.canvasState.isVisible());
-    */}
+    private void updateRadioButtons(Integer selectedLayer){
+      //  Layer dt.getCanvasState().getOrInitializeLayer(selectedLayer);
+    }
 
     private void pushForward(ActionEvent event){
       /*  System.out.println("push to top");

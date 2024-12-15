@@ -79,7 +79,7 @@
 			this.setLeft(test1);
 			RightVBox test2 = new RightVBox(drawingTool);
 			this.setRight(test2);
-			TopHBox test3 = new TopHBox(10);
+			TopHBox test3 = new TopHBox(10, drawingTool);
 			this.setTop(test3);
 			this.setCenter(canvas);
 		}

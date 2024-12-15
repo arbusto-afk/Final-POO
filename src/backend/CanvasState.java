@@ -14,18 +14,11 @@ public class CanvasState {
     Cada layer es unica, se mantiene su orden de insercion;
      */
     private final Map<Integer, Layer> layers = new TreeMap<>();
-    //private final Map<Figure, T> colorMap = new HashMap<>();
-    private final List<Figure> selectedFigures = new ArrayList<>();
+    private final Set<Figure> selectedFigures = new HashSet<>();
 
+    private final Integer DUPLICATEOFFSET = 15;
     private final Integer STARTINGLAYERS = 3;
-/*
-    public void setFigureColor(Figure fig, T color){
-        colorMap.put(fig, color);
-    }
-    public T getFigureColor(Figure fig){
-        return colorMap.get(fig);
-    }
-*/
+
     public Integer getFigureLayer(Figure fig) throws FigureNotFoundException {
         for (Map.Entry<Integer, Layer> entry : layers.entrySet()) {
             if (entry.getValue().figures().contains(fig)) {
@@ -35,7 +28,7 @@ public class CanvasState {
         throw new FigureNotFoundException();
     }
 
-    private Layer getOrInitializeLayer(Integer layerIndex) {
+    public Layer getOrInitializeLayer(Integer layerIndex) {
         if (layers.containsKey(layerIndex))
             return layers.get(layerIndex);
         Layer l = new Layer();
@@ -98,10 +91,11 @@ public class CanvasState {
         return returnIterable;
     }
 
-    public List<Figure> selectedFigures() {
+    public Iterable<Figure> selectedFigures() {
         return selectedFigures;
     }
-    public void selectFigure(List<Figure> figureList){
+
+    public void selectFigure(Collection<Figure> figureList){
         this.selectedFigures.addAll(figureList);
     }
     public void selectFigure(Figure fig) {   this.selectedFigures.add(fig);}
@@ -113,19 +107,14 @@ public class CanvasState {
         selectedFigures.clear();
     }
 
-    public void forEachSelectedFigure(Consumer<Figure> action) {
-        if (selectedFigures().isEmpty()) {
-            return;
-        }
-        for (Figure fig : selectedFigures()) {
-            action.accept(fig);
-        }
-    }
-    public void forEachVisibleFigure(Consumer<Figure> action) {
-        for (Figure fig : visibleFigures()) {
-            action.accept(fig);
+    public void groupFigures(Iterable<Figure> figuresToGroup){
+        for(Figure fig : figuresToGroup){
+
         }
     }
 
+    public Integer getDUPLICATEOFFSET() {
+        return DUPLICATEOFFSET;
+    }
 }
 

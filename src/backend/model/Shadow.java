@@ -3,10 +3,21 @@ package backend.model;
 import java.awt.*;
 
 public enum Shadow {
-    NONE, SIMPLE, COLOR, INVERTED, INVERTEDCOLOR;
+    NONE("none"),
+    SIMPLE("Simple"),
+    COLOR("Color"),
+    INVERTED("Inverted color"),
+    INVERTEDCOLOR("Inverted");
 
-    final int shadowOffset = 10;
+    private final int shadowOffset = 10;
+    private final String displayName;
 
+    Shadow(String displayName){
+        this.displayName = displayName;
+    }
+    public String getDisplayName() {
+        return this.displayName;
+    }
     public int getOffset() {
         if(this.equals(NONE))
             return 0;
