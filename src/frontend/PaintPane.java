@@ -2,8 +2,11 @@
 	
 	import backend.CanvasState;
 	import backend.model.*;
-	import frontend.Events.LeftVBoxEvents;
-	import frontend.Events.RightVBoxEvents;
+	import frontend.DrawingTool.DrawingTool;
+	import frontend.Events.FigureCanvas;
+	import frontend.Events.LeftVBox;
+	import frontend.Events.RightVBox;
+	import frontend.Events.TopHBox;
 	import javafx.scene.canvas.Canvas;
 	import javafx.scene.control.*;
 	import javafx.scene.layout.BorderPane;
@@ -11,13 +14,10 @@
 
 	public class PaintPane extends BorderPane {
 
-		ComponentInitializer componentInitializer = new ComponentInitializer();
 		CanvasState canvasState;
 	
-		Canvas canvas = new Canvas(800, 600);
+		//Canvas canvas = new Canvas(800, 600);
 
-		Color defaultFillColor = Color.YELLOW;
-		Color defaultSecondaryFillColor = Color.ORANGE;
 	/*
 		// Botones Barra Izquierda
 		static final String rectangleText = "Rectángulo";
@@ -62,7 +62,7 @@
 //		Button removeLayerButton = new Button("Eliminar capa");
 
 		// Dibujar una figura
-		Point startPoint;
+        public Point startPoint;
 		// StatusBar
 		StatusPane statusPane;
 
@@ -73,12 +73,14 @@
         public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 			this.canvasState = canvasState;
 			this.statusPane = statusPane;
-			drawingTool = new DrawingTool(canvas, canvasState, this);
-			LeftVBoxEvents test1 = new LeftVBoxEvents(drawingTool);
+			FigureCanvas canvas = new FigureCanvas(canvasState, 800, 600);
+			drawingTool = canvas.getDrawingTool();
+			LeftVBox test1 = new LeftVBox(drawingTool);
 			this.setLeft(test1);
-			RightVBoxEvents test2 = new RightVBoxEvents(drawingTool);
-			this.setLeft(test2);
-
-			componentInitializer.initializePaintPane(this, canvasState, statusPane, drawingTool);
+			RightVBox test2 = new RightVBox(drawingTool);
+			this.setRight(test2);
+			TopHBox test3 = new TopHBox(10);
+			this.setTop(test3);
+			this.setCenter(canvas);
 		}
 	}

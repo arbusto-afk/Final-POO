@@ -3,30 +3,31 @@ package frontend.Events;
 import backend.CanvasState;
 import backend.model.Figure;
 import backend.model.Point;
-import frontend.DrawingTool;
-import frontend.StatusPane;
+import frontend.DrawingTool.DrawingTool;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 
-public class CanvasEvents {
+public class FigureCanvas extends Canvas {
 
     private final CanvasState canvasState;
     private final DrawingTool drawingTool;
     private Point startPoint;
     private Point selectionDragStartOffset;
 
-    public CanvasEvents(CanvasState canvasState, DrawingTool drawingTool){
+    public FigureCanvas(CanvasState canvasState, double width, double height){
+        super(width, height);
         this.canvasState = canvasState;
-        this.drawingTool = drawingTool;
+        this.drawingTool = new DrawingTool(this, canvasState);
 
+        this.setOnMousePressed(this::onMousePressed);
+        this.setOnMouseReleased(this::onMouseRelease);
+        this.setOnMouseMoved(this::onMouseRelease);
+        this.setOnMouseClicked(this::onMouseClicked);
+        this.setOnDragDetected(this::onMouseDragged);
     }
 
-    public void setupCanvas(Canvas c){
-        c.setOnMousePressed(this::onMousePressed);
-        c.setOnMouseReleased(this::onMouseRelease);
-        c.setOnMouseMoved(this::onMouseRelease);
-        c.setOnMouseClicked(this::onMouseClicked);
-        c.setOnDragDetected(this::onMouseDragged);
+    public DrawingTool getDrawingTool() {
+        return drawingTool;
     }
 
     private void onMousePressed(MouseEvent event) {
@@ -37,6 +38,7 @@ public class CanvasEvents {
         }
     }
     private void onMouseRelease(MouseEvent event) {
+        System.out.println("Sus");
         if (startPoint == null) {
             return;
         }

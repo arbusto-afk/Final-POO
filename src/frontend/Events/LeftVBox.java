@@ -1,29 +1,18 @@
 package frontend.Events;
 
-import backend.CanvasState;
-import backend.FigureBuilder;
 import backend.FigureNotFoundException;
-import backend.model.Circle;
 import backend.model.Figure;
 import backend.model.Shadow;
-import frontend.DrawingTool;
+import frontend.DrawingTool.DrawingMode;
+import frontend.DrawingTool.DrawingTool;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import backend.CanvasState;
-import backend.FigureNotFoundException;
-import backend.model.*;
-import frontend.Events.CanvasEvents;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
-public class LeftVBoxEvents extends VBox {
+public class LeftVBox extends VBox {
 
     Color defaultFillColor = Color.YELLOW;
     Color defaultSecondaryFillColor = Color.ORANGE;
@@ -52,7 +41,7 @@ public class LeftVBoxEvents extends VBox {
 
     private final ToggleGroup tools = new ToggleGroup();
 
-    public LeftVBoxEvents(DrawingTool drawingTool){
+    public LeftVBox(DrawingTool drawingTool){
 
         super(10);
         this.setPadding(new Insets(5));
@@ -80,37 +69,16 @@ public class LeftVBoxEvents extends VBox {
         shadowTypeBox.setValue(Shadow.NONE);
         shadowTypeBox.getItems().addAll(Shadow.values());
 
-        selectionButton.setOnAction(e -> {
-            if(!selectionButton.isSelected()) {
-                drawingTool.getCanvasState().deselectFigures();
+        selectionButton.setOnAction(e-> drawingTool.setDrawingMode(DrawingMode.NONE));
+        rectangleButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.RECT));
+        squareButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.SQUARE));
+        circleButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.CIRCLE));
+        ellipseButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.ELLIPSE));
+        tools.selectedToggleProperty().addListener((obs,oldToggle,newToggle) -> {
+            if(newToggle == null) {
+                drawingTool.setDrawingMode(DrawingMode.NONE);
             }
-        drawingTool.setBuilder(false);});
-        //todo improve
-        rectangleButton.setOnAction(e -> {
-            if(rectangleButton.isSelected()){
-                drawingTool.setBuilder(FigureBuilder.RECT);
-            } else {
-                drawingTool.setBuilder(false);
-            }
-                });
-        squareButton.setOnAction(e -> {
-            if(squareButton.isSelected()) {
-                drawingTool.setBuilder(FigureBuilder.SQUARE);
-            } else {
-                drawingTool.setBuilder(false);
-            }});
-        circleButton.setOnAction(e -> {
-            if(circleButton.isSelected()) {
-                drawingTool.setBuilder(FigureBuilder.CIRCLE);
-            } else {
-                drawingTool.setBuilder(false);
-            }});
-        ellipseButton.setOnAction(e -> {
-            if(ellipseButton.isSelected()) {
-                drawingTool.setBuilder(FigureBuilder.ELLIPSE);
-            } else {
-                drawingTool.setBuilder(false);
-            }});
+        });
      //   deleteButton.setOnAction(e -> canvasState.forEachSelectedFigure(canvasState.deleteFigure();));
 
         deleteButton.setOnAction(e -> {
@@ -128,14 +96,14 @@ public class LeftVBoxEvents extends VBox {
                     for (Figure fig : drawingTool.getCanvasState().selectedFigures()) {
                         fig.setHasBevel(bevelCheckbox.isSelected());
                     }
-                    drawingTool.setBevelOn(bevelCheckbox.isSelected());
+               //     drawingTool.setBevelOn(bevelCheckbox.isSelected());
                     drawingTool.redrawCanvas();
                 });
         shadowTypeBox.setOnAction(e ->{
                 for(Figure fig : drawingTool.getCanvasState().selectedFigures()) {
                     fig.setShadeType(shadowTypeBox.getValue());
                 }
-                drawingTool.setShadowType(shadowTypeBox.getValue());
+          //      drawingTool.setShadowType(shadowTypeBox.getValue());
                 drawingTool.redrawCanvas();
         });
         //todo copy format (cast radial to lineargradient) and viceversa

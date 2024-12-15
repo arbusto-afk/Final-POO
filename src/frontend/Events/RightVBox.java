@@ -2,7 +2,7 @@ package frontend.Events;
 
 import backend.CanvasState;
 import backend.FigureNotFoundException;
-import frontend.DrawingTool;
+import frontend.DrawingTool.DrawingTool;
 import javafx.geometry.Insets;
 import javafx.scene.control.Control;
 import javafx.scene.layout.VBox;
@@ -10,7 +10,7 @@ import backend.model.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
-public class RightVBoxEvents extends VBox {
+public class RightVBox extends VBox {
 
     private  DrawingTool dt;
     private  CanvasState cs;
@@ -29,22 +29,18 @@ public class RightVBoxEvents extends VBox {
     Button divideButton = new Button(divideText);
 
 
-public RightVBoxEvents(DrawingTool drawingTool){
+public RightVBox(DrawingTool drawingTool){
     super(10);
 
     setPadding(new Insets(5));
     setStyle("-fx-background-color: #999");
     setPrefWidth(100);
 
-
-     actionLabel = new Label("Acciones");
-
     Control[] rightControls = {
             actionLabel, turnButton,flipHorizontalButton,
             flipVerticalButton, duplicateButton,divideButton
     };
-    getChildren().add(actionLabel);
-    getChildren().addAll(rightControls);
+    this.getChildren().addAll(rightControls);
 
 
     turnButton.setOnAction(e-> {

@@ -1,14 +1,14 @@
 package frontend.Events;
 
 import backend.CanvasState;
-import frontend.DrawingTool;
+import frontend.DrawingTool.DrawingTool;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
-public class topButtonsBox extends HBox {
+public class TopHBox extends HBox {
 
     private  CanvasState cs;
     private DrawingTool dt;
@@ -34,7 +34,7 @@ public class topButtonsBox extends HBox {
 
 
 
-    public topButtonsBox(int inset) {
+    public TopHBox(int inset) {
         super(inset);
 
         // Style

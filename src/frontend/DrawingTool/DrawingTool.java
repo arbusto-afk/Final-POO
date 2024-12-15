@@ -1,16 +1,14 @@
-package frontend;
+package frontend.DrawingTool;
 
 import backend.CanvasState;
 import backend.model.*;
-import backend.FigureBuilder;
-import frontend.Events.DrawingMode;
+import frontend.PaintPane;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class DrawingTool {
     private final Canvas canvas;
@@ -32,77 +30,53 @@ public class DrawingTool {
     PaintPane pp;
     public CanvasState getCanvasState() { return this.canvasState; }
 
-    public DrawingTool(Canvas canvas, CanvasState cs, PaintPane pp) {
+    private static final Color defaultStartColor = Color.YELLOW;
+    private static final Color defaultEndColor = Color.ORANGE;
+    public DrawingTool(Canvas canvas, CanvasState cs) {
         this.canvasState = cs;
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
         this.pp = pp;
-        this.drawingMode = DrawingMode.LINEAR;
+        this.drawingMode = DrawingMode.RECT;
         gc.setLineWidth(drawingMode.getDefaultWidth());
+        this.startColor = defaultStartColor;
+        this.endColor = defaultEndColor;
     }
 
-    private FigureBuilder figureBuilder;
     private DrawingMode drawingMode;
-
-    public void setBuilder(FigureBuilder builder){
-        switch (builder){
-            case RECT:
-            case SQUARE:
-                this.drawingMode = DrawingMode.LINEAR;
-                break;
-            case CIRCLE:
-            case ELLIPSE:
-                this.drawingMode = DrawingMode.RADIAL;
-                break;
-        }
-        this.figureBuilder = builder;
+    public void setDrawingMode(DrawingMode drawingMode){
+        this.drawingMode = drawingMode;
     }
-    //temporarily disables drawing
-    //todo improve
-    public void setBuilder(boolean bool){
-        if(bool){
-            this.setBuilder(this.figureBuilder);
-        } else {
-            this.drawingMode = DrawingMode.NONE;
-        }
-    }
-
-    private Shadow shadowType = Shadow.NONE;
-    private boolean bevelOn = false;
-    //todo not hardcode
-    private Color startColor = Color.YELLOW;
-    private Color endColor = Color.ORANGE;
+    private Color startColor;
+    private Color endColor;
 
     public Color getEndColor() {
         return endColor;
     }
-
-    public void setEndColor(Color endColor) {
-        this.endColor = endColor;
-    }
-
     public Color getStartColor() {
         return startColor;
     }
-
+    public void setEndColor(Color endColor) {
+        this.endColor = endColor;
+    }
     public void setStartColor(Color startColor) {
         this.startColor = startColor;
     }
 
-    public boolean isBevelOn() {
-        return bevelOn;
-    }
 
-    public void setBevelOn(boolean bevelOn) {
-        this.bevelOn = bevelOn;
+    boolean figToDrawHasBevel;
+    Shadow figToDrawShadowType;
+    public boolean isFigToDrawHasBevel() {
+        return figToDrawHasBevel;
     }
-
-    public Shadow getShadowType() {
-        return shadowType;
+    public void setFigToDrawHasBevel(boolean figToDrawHasBevel) {
+        this.figToDrawHasBevel = figToDrawHasBevel;
     }
-
-    public void setShadowType(Shadow shadowType) {
-        this.shadowType = shadowType;
+    public Shadow getFigToDrawShadowType() {
+        return figToDrawShadowType;
+    }
+    public void setFigToDrawShadowType(Shadow figToDrawShadowType) {
+        this.figToDrawShadowType = figToDrawShadowType;
     }
 
     public void drawFigure(Point startPoint, Point endPoint) {
@@ -110,9 +84,8 @@ public class DrawingTool {
             return;
         if(this.drawingMode.equals(DrawingMode.NONE))
             return;
-        Shadow shadowType = this.shadowType;
-        boolean hasBevel = this.bevelOn;
-        Figure fig = figureBuilder.createFigure(startPoint, endPoint, shadowType, hasBevel);
+
+        Figure fig = drawingMode.createFigure(startPoint, endPoint, this.figToDrawShadowType, this.figToDrawHasBevel);
         Paint p = drawingMode.getGradient(
                 this.startColor,
                 this.endColor
@@ -130,11 +103,5 @@ public class DrawingTool {
         for(Figure fig : canvasState.visibleFigures()){
             drawModeMap.get(fig).drawFigure(fig, this.cStateColorMap.get(fig), canvasState.isSelected(fig), this.gc);
         }
-    }
-
-
-    public void forEachSelectedFigureThenRedraw(Consumer<Figure> func){
-        canvasState.forEachSelectedFigure(func);
-        redrawCanvas();
     }
 }
