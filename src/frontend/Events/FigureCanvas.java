@@ -8,13 +8,18 @@ import frontend.StatusPane;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class FigureCanvas extends Canvas {
 
     private final CanvasState canvasState;
     private final DrawingTool drawingTool;
     private final StatusPane statusPane;
     private Point startPoint;
-    private Point selectionDragStartOffset;
+    private final Map<Figure, Point> selectionDragStartOffset = new HashMap<>();
 
     public FigureCanvas(CanvasState canvasState, double width, double height, StatusPane statusPane){
         super(width, height);
@@ -26,7 +31,7 @@ public class FigureCanvas extends Canvas {
         this.setOnMouseReleased(this::onMouseRelease);
         this.setOnMouseMoved(this::onMouseMoved);
         this.setOnMouseClicked(this::onMouseClicked);
-        this.setOnDragDetected(this::onMouseDragged);
+        this.setOnMouseDragged(this::onMouseDragged);
     }
 
     public DrawingTool getDrawingTool() {
@@ -35,6 +40,9 @@ public class FigureCanvas extends Canvas {
 
     private void onMousePressed(MouseEvent event) {
         startPoint = new Point(event.getX(), event.getY());
+        for(Figure fig : canvasState.selectedFigures()){
+            selectionDragStartOffset.put(fig, fig.getCenterPoint().getDifference(startPoint));
+        }
     }
     private void onMouseRelease(MouseEvent event) {
         if (startPoint == null) {
@@ -45,8 +53,8 @@ public class FigureCanvas extends Canvas {
             return;
         }
 
-        //todo properly validate bool
         drawingTool.getCanvasState().deselectFigures();
+        selectionDragStartOffset.clear();
         if (drawingTool.isSelectionOn()) {
             for (Figure fig : canvasState.visibleFigures()) {
                 Point topL = fig.getCenterPoint().substract(fig.getWidth() / 2, fig.getHeight() / 2);
@@ -59,7 +67,6 @@ public class FigureCanvas extends Canvas {
         if (drawingTool.getUseDrawingMode()) {
             drawingTool.createAndAddFigure(startPoint, endPoint);
         }
-        //startPoint = null;
         drawingTool.redrawCanvas();
     }
 
@@ -74,6 +81,8 @@ public class FigureCanvas extends Canvas {
         } else {
             this.statusPane.updateStatus(strB.toString());
         }
+
+        drawingTool.redrawCanvas();
     }
 
     public void onMouseClicked(MouseEvent event) {
@@ -113,19 +122,12 @@ public class FigureCanvas extends Canvas {
     }
 
 
-    //todo not move only first
     public void onMouseDragged(MouseEvent event) {
         Point eventPoint = new Point(event.getX(), event.getY());
-       /* if(!canvasState.selectedFigures().isEmpty()){
-            for(Figure fig : canvasState.selectedFigures()){
-                Point newCenter = eventPoint;
-                fig.move(newCenter);
-            }
-        }*//*
-        if (!canvasState.selectedFigures().isEmpty()) {
-            canvasState.selectedFigures().getFirst().move(eventPoint.add(selectionDragStartOffset));
-            drawingTool.redrawCanvas();
-        }*/
+        for (Figure fig : canvasState.selectedFigures()) {
+            fig.move(eventPoint.add(selectionDragStartOffset.get(fig)));
+        }
+        drawingTool.redrawCanvas();
     }
 
 

@@ -15,7 +15,7 @@ public enum Shadow {
     Shadow(String displayName){
         this.displayName = displayName;
     }
-    public String getDisplayName() {
+    public String toString() {
         return this.displayName;
     }
     public int getOffset() {

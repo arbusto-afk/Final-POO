@@ -27,7 +27,7 @@ public class Layer implements Iterable<Figure> {
             throw new FigureNotFoundException();
         figures.remove(figure);
     }
-    public void divideFigure(Figure figure) {
+    public Pair<Figure, Figure> divideFigure(Figure figure) {
         if(!figures.contains(figure))
            throw new FigureNotFoundException();
 
@@ -36,7 +36,9 @@ public class Layer implements Iterable<Figure> {
 
         figure.resize(figure.getWidth() / 2, figure.getHeight() / 2);
         figure.move(leftCenter);
-        addFigure(figure.duplicate(0).move(rightCenter));
+        Figure dupl = figure.duplicate(0).move(rightCenter);
+        addFigure(dupl);
+        return new Pair<>(figure, dupl);
     }
 
     public void sendToBack(Figure figure) {

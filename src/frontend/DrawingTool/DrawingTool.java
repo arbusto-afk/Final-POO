@@ -14,16 +14,27 @@ public class DrawingTool {
     private final Canvas canvas;
     private final GraphicsContext gc;
     private final CanvasState canvasState;
+    //map figures to Pair containing options for drawing it
     private final Map<Figure, Pair<DrawingMode, Paint>> drawingModeMap = new HashMap<>();
 
     public Paint getGradientForFigure(Figure fig, Color c1, Color c2){
         return drawingModeMap.get(fig).getLeft().getGradient(c1, c2);
     }
-    public void setFigureColor(Figure fig, Paint p){
+    public void setExistingFigureColor(Figure fig, Paint p){
+        if(drawingModeMap.get(fig) == null)
+            throw new RuntimeException("Attempting to change paint on non existent figure");
         Pair<DrawingMode, Paint> options = new Pair<>(drawingModeMap.get(fig).getLeft(), p);
         drawingModeMap.remove(fig);
         drawingModeMap.put(fig, options);
     }
+    public void setFigurePair(Figure fig, Pair<DrawingMode, Paint> pair){
+        drawingModeMap.remove(fig);
+        drawingModeMap.put(fig, pair);
+    }
+    public Pair<DrawingMode, Paint> getFigurePair(Figure fig){
+        return drawingModeMap.get(fig);
+    }
+
 
     public CanvasState getCanvasState() { return this.canvasState; }
 
@@ -104,7 +115,10 @@ public class DrawingTool {
         canvasState.addFigure(fig, layerIndex);
         redrawCanvas();
     }
-
+    public void deleteFigure(Figure fig, Integer layer){
+        canvasState.deleteFigure(fig, layer);
+        drawingModeMap.remove(fig);
+    }
     public void redrawCanvas() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         for(Figure fig : canvasState.visibleFigures()){

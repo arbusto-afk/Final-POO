@@ -60,9 +60,9 @@ public class CanvasState {
         Layer l = getOrInitializeLayer(layerIndex);
         l.removeFigure(figure);
     }
-    public void divideFigure(Figure figure, Integer layerIndex) throws FigureNotFoundException {
+    public Pair<Figure, Figure> divideFigure(Figure figure, Integer layerIndex) throws FigureNotFoundException {
         Layer l = getOrInitializeLayer(layerIndex);
-        l.divideFigure(figure);
+        return l.divideFigure(figure);
     }
 
 

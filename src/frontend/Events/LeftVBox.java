@@ -63,6 +63,7 @@ public class LeftVBox extends VBox {
         // Set up choice box
         shadowTypeBox.setValue(Shadow.NONE);
         shadowTypeBox.getItems().addAll(Shadow.values());
+
         selectionButton.setOnAction(e-> drawingTool.setSelectionOn(selectionButton.isSelected()));
         rectangleButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.RECT));
         squareButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.SQUARE));
@@ -106,7 +107,7 @@ public class LeftVBox extends VBox {
                     fig.setHasBevel(copiedFigure.getHasBevel());
                     fig.setShadeType(copiedFigure.getShadeType());
                     //todo fix this
-                    drawingTool.setFigureColor(fig, Color.PINK);
+                 //   drawingTool.setFigureColor(fig, Color.PINK);
                 }
                 copiedFigure = null;
             }
@@ -120,14 +121,14 @@ public class LeftVBox extends VBox {
         fillColorPicker.setOnAction(e -> {
             drawingTool.setStartColor(fillColorPicker.getValue());
             for (Figure fig : drawingTool.getCanvasState().selectedFigures()) {
-                drawingTool.setFigureColor(fig, drawingTool.getGradientForFigure(fig, drawingTool.getStartColor(), drawingTool.getEndColor()));
+                drawingTool.setExistingFigureColor(fig, drawingTool.getGradientForFigure(fig, drawingTool.getStartColor(), drawingTool.getEndColor()));
             }
             drawingTool.redrawCanvas();
         });
         fillSecondaryColorPicker.setOnAction(e -> {
             drawingTool.setEndColor(fillSecondaryColorPicker.getValue());
             for (Figure fig : drawingTool.getCanvasState().selectedFigures()) {
-                drawingTool.setFigureColor(fig, drawingTool.getGradientForFigure(fig, drawingTool.getStartColor(), drawingTool.getEndColor()));
+                drawingTool.setExistingFigureColor(fig, drawingTool.getGradientForFigure(fig, drawingTool.getStartColor(), drawingTool.getEndColor()));
             }
             drawingTool.redrawCanvas();
         });
