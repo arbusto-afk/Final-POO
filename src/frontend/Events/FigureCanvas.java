@@ -61,9 +61,13 @@ public class FigureCanvas extends Canvas {
                     Set<Figure> group = canvasState.getFigureGroup(fig);
                     if(group != null) {
                         canvasState.selectFigure(group);
+                        drawingTool.pasteFormatOnto(group);
                     } else {
                         canvasState.selectFigure(fig);
+                        drawingTool.pasteFormatOnto(group);
                     }
+                    drawingTool.setCopiedFigure(null);
+
                 }
             }
         }
@@ -101,9 +105,12 @@ public class FigureCanvas extends Canvas {
                 Set<Figure> group = canvasState.getFigureGroup(fig);
                 if(group != null) {
                     canvasState.selectFigure(group);
+                    drawingTool.pasteFormatOnto(group);
                 } else {
                     canvasState.selectFigure(fig);
+                    drawingTool.pasteFormatOnto(fig);
                 }
+                drawingTool.setCopiedFigure(null);
                 found = true;
             }
             if (!found) {

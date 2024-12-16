@@ -1,8 +1,10 @@
 package frontend.Events;
+import backend.Pair;
 import backend.model.Figure;
 import backend.model.Shadow;
 import frontend.DrawingTool.DrawingMode;
 import frontend.DrawingTool.DrawingTool;
+import frontend.StatusPane;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -35,7 +37,7 @@ public class LeftVBox extends VBox {
 
     private Figure copiedFigure;
 
-    public LeftVBox(DrawingTool drawingTool){
+    public LeftVBox(DrawingTool drawingTool, StatusPane pane){
 
         super(10);
         this.setPadding(new Insets(5));
@@ -100,20 +102,16 @@ public class LeftVBox extends VBox {
                 drawingTool.redrawCanvas();
         });
         copyFormatButton.setOnAction(e -> {
-            if(copiedFigure != null) {
-                for (Figure fig : drawingTool.getCanvasState().selectedFigures()) {
-                    fig.setHasBevel(copiedFigure.getHasBevel());
-                    fig.setShadeType(copiedFigure.getShadeType());
-                    //todo fix this
-                 //   drawingTool.setFigureColor(fig, Color.PINK);
-                }
-                copiedFigure = null;
+            if(drawingTool.getCanvasState().getSelectedFiguresCount() > 1){
+                drawingTool.setCopiedFigure(null);
+                    pane.updateStatus("No se puede copiar formato con mas de 1 figura seleccionada");
+            } else {
+                drawingTool.setCopiedFigure(drawingTool.getCanvasState().getSingleSelectedFigure());
+                drawingTool.getCanvasState().deselectFigures();
+                drawingTool.redrawCanvas();
             }
 
-            //todo here what to do hay que definir como interpretar este caso particular
-        /*    if(!drawingTool.getCanvasState().selectedFigures().isEmpty()){
-                copiedFigure = drawingTool.getCanvasState().selectedFigures().getFirst();
-            }*/
+
         });
 
         fillColorPicker.setOnAction(e -> {

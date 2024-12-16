@@ -75,7 +75,7 @@
 			this.statusPane = statusPane;
 			FigureCanvas canvas = new FigureCanvas(canvasState, 800, 600, statusPane);
 			drawingTool = canvas.getDrawingTool();
-			LeftVBox test1 = new LeftVBox(drawingTool);
+			LeftVBox test1 = new LeftVBox(drawingTool, statusPane);
 			this.setLeft(test1);
 			RightVBox test2 = new RightVBox(drawingTool);
 			this.setRight(test2);

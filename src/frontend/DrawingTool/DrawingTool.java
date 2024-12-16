@@ -16,6 +16,15 @@ public class DrawingTool {
     private final CanvasState canvasState;
     //map figures to Pair containing options for drawing it
     private final Map<Figure, Pair<DrawingMode, Paint>> drawingModeMap = new HashMap<>();
+    private Figure copiedFigure = null;
+
+    public Figure getCopiedFigure() {
+        return copiedFigure;
+    }
+
+    public void setCopiedFigure(Figure copiedFigure) {
+        this.copiedFigure = copiedFigure;
+    }
 
     public Paint getGradientForFigure(Figure fig, Color c1, Color c2){
         return drawingModeMap.get(fig).getLeft().getGradient(c1, c2);
@@ -126,5 +135,24 @@ public class DrawingTool {
         }
     }
 
+    public void pasteFormatOnto(Iterable<Figure> figs){
+        if(copiedFigure == null)
+            return;
+        for(Figure fig : figs){
+            pasteFormatOnto(fig);
+        }
+    }
+
+    public void pasteFormatOnto(Figure fig){
+        if(copiedFigure == null)
+            return;
+      //  Pair<DrawingMode, Paint> copiedFormat = getFigurePair(copiedFigure);
+        fig.setShadeType(copiedFigure.getShadeType());
+        fig.setHasBevel(copiedFigure.getHasBevel());
+        DrawingMode currentMode = getFigurePair(fig).getLeft();
+        Pair<DrawingMode, Paint> options = new Pair<>(currentMode, currentMode.getGradient(Color.PINK, Color.DEEPPINK));
+        setFigureDrawingOptionsPair(fig, options );
+        redrawCanvas();
+    }
 
 }

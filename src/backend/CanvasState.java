@@ -2,7 +2,6 @@ package backend;
 
 import backend.model.Figure;
 import backend.model.Point;
-
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -140,8 +139,18 @@ public class CanvasState {
     public Integer getDUPLICATEOFFSET() {
         return DUPLICATEOFFSET;
     }
-    public boolean isSelectedFigureCount(Integer n){
-        return selectedFigures.size() == n;
+    public Integer getSelectedFiguresCount(){
+        return selectedFigures.size();
+    }
+    public Figure getSingleSelectedFigure() {
+        Figure retFig = null;
+        if(selectedFigures.isEmpty())
+            throw new RuntimeException("Attempting to get a figure from empty canvasState");
+        for (Figure fig : selectedFigures) {
+            retFig = fig;
+            return fig;
+        }
+        return retFig;
     }
 }
 
