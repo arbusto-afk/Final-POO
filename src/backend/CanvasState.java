@@ -9,82 +9,106 @@ import java.util.function.Consumer;
 
 public class CanvasState {
 
-    /*
-    Cada layer es unica, se mantiene su orden de insercion;
-     */
-    private final Map<Integer, Layer> layers = new TreeMap<>();
+//  Cada layer es unica, se mantiene su orden de insercion;
+
+    private final Map<String, Layer> layers = new TreeMap<>();
     private final Set<Figure> selectedFigures = new HashSet<>();
     private final Set<Set<Figure>> figureGroups = new HashSet<>();
 
     private final Integer DUPLICATEOFFSET = 15;
     private final Integer STARTINGLAYERS = 3;
+    private int getLastLayerNumber = 1;
+    private String workingLayerName = "Capa 1";
 
-    public Integer getFigureLayer(Figure fig) throws FigureNotFoundException {
-        for (Map.Entry<Integer, Layer> entry : layers.entrySet()) {
-            if (entry.getValue().figures().contains(fig)) {
+    public CanvasState() {
+        while(getLastLayerNumber <= STARTINGLAYERS) {
+            initializeNewLayer();
+            System.out.println(getLastLayerNumber);
+        }
+    }
+
+    public void addFigure(Figure figure) {
+        layers.get(workingLayerName).addFigureLast(figure);
+    }
+
+    public String getFigureLayer(Figure fig) throws FigureNotFoundException {
+        for (Map.Entry<String, Layer> entry : layers.entrySet()) {
+            if (entry.getValue().getFigures().contains(fig)) {
                 return entry.getKey();
             }
         }
         throw new FigureNotFoundException();
     }
 
-    public Layer getOrInitializeLayer(Integer layerIndex) {
-        if (layers.containsKey(layerIndex))
-            return layers.get(layerIndex);
-        Layer l = new Layer();
-        layers.put(layerIndex, l);
-        return l;
+    public String initializeNewLayer() {
+        String newLayerName = "Capa " + getLastLayerNumber;
+        getLastLayerNumber+=1;
+        layers.putIfAbsent(newLayerName, new Layer());
+        return newLayerName;
     }
 
-    private void initializeInitialLayers(Integer initialLayerCount){
-        for(int i = 0; i < initialLayerCount; i++){
-            layers.putIfAbsent(i, new Layer());
+    private boolean LayerCheck(String layerName){
+        return layers.containsKey(layerName);
+    }
+
+    public List<Figure> getAllVisibleFigures(){
+        List<Figure> toReturn = new LinkedList<>();
+        for(Layer l : layers.values()){
+            if(!l.isHidden())
+                toReturn.addAll(l.getFigures());
         }
-    }
-    public CanvasState(){
-        initializeInitialLayers(STARTINGLAYERS);
+        return toReturn;
     }
 
-    public void addFigure(Figure figure, Integer layerIndex) {
-        Layer l = getOrInitializeLayer(layerIndex);
-        l.addFigure(figure);
+    public void setWorkingLayer(String newLayerName) { workingLayerName = newLayerName; }
+
+    public void deleteLayer(String layerName){
+        layers.get(layerName);
+        layers.remove(layerName);
     }
 
-    /*
-    Borra una figura de la capa seleccionada, si no existe lanza una FigureNotFoundException
-     */
-    public void deleteLayer(Integer layerIndex){
-        layers.remove(layerIndex);
+    //En base al workingIndex, usa regex
+    public void showLayer(String WorkingLayerName) {
+        layers.get(WorkingLayerName).show();
     }
-    public void deleteFigure(Figure figure, Integer layerIndex) throws FigureNotFoundException {
-        Layer l = getOrInitializeLayer(layerIndex);
-        l.removeFigure(figure);
+
+    public void hideLayer(String WorkingLayerName) {
+        layers.get(WorkingLayerName).hide();
     }
-    public Pair<Figure, Figure> divideFigure(Figure figure, Integer layerIndex) throws FigureNotFoundException {
-        Layer l = getOrInitializeLayer(layerIndex);
-        return l.divideFigure(figure);
+
+    public boolean isLayerHidden(String WorkingLayerName) {
+        return layers.get(WorkingLayerName).isHidden();
     }
 
 
-    private List<Figure> collectFigures(boolean collectHidden) {
-        List<Figure> figures = new ArrayList<>();
-        for (Layer layer : layers.values()) {
-            if (collectHidden || !layer.isHidden()) {
-                figures.addAll(layer.figures());
-            }
+//  Borra una figura de la capa seleccionada, si no existe lanza una FigureNotFoundException
+    public void deleteFigure(Figure figure, String layerName) throws FigureNotFoundException {
+        if(!LayerCheck(layerName)){
+            throw new LayerNotFoundException("Layer not found!");
         }
-        return figures;
+        layers.get(layerName).removeFigure(figure);
     }
 
-    public Iterable<Figure> figures(){
-        return collectFigures(true);
+    public Pair<Figure, Figure> divideFigure(Figure figure, String layerName) throws FigureNotFoundException {
+        if(!LayerCheck(layerName)){
+            throw new LayerNotFoundException("Layer not found!");
+        }
+        return layers.get(layerName).divideFigure(figure);
     }
-    public Iterable<Figure> visibleFigures(){
-        return collectFigures(false);
+
+    public void pushSelectedFigureForward(String workingLayerName) {
+        for(Figure f : selectedFigures)
+            layers.get(workingLayerName).pushToFront(f);
     }
+
+    public void pushSelectedFigureToBottom(String workingLayerName) {
+        for(Figure f : selectedFigures)
+            layers.get(workingLayerName).sendToBack(f);
+    }
+
     public Iterable<Figure> visibleFiguresAtPoint(Point p){
         List<Figure> returnIterable = new ArrayList<>();
-        for(Figure fig: collectFigures(false)){
+        for(Figure fig: getAllVisibleFigures()){
             if(fig.pointBelongs(p))
                 returnIterable.add(fig);
         }
@@ -98,7 +122,9 @@ public class CanvasState {
     public void selectFigure(Collection<Figure> figureList){
         this.selectedFigures.addAll(figureList);
     }
+
     public void selectFigure(Figure fig) {   this.selectedFigures.add(fig);}
+
     public boolean isSelected(Figure fig) {
         return selectedFigures.contains(fig);
     }

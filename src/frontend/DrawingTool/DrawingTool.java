@@ -93,15 +93,19 @@ public class DrawingTool {
 
     private boolean selectionOn = false;
     private boolean useDrawingMode = false;
+
     public void setUseDrawingMode(boolean useDrawingMode){
         this.useDrawingMode = useDrawingMode;
     }
+
     public boolean getUseDrawingMode() {
         return useDrawingMode;
     }
+
     public boolean isSelectionOn() {
         return selectionOn;
     }
+
     public void setSelectionOn(boolean selectionOn) {
         this.selectionOn = selectionOn;
         if(selectionOn)
@@ -117,20 +121,18 @@ public class DrawingTool {
                 this.startColor,
                 this.endColor
         );
-        addFigure(fig, new Pair<>(drawingMode, p), 1);
+        addFigure(fig, new Pair<>(drawingMode, p));
     }
-    public void addFigure(Figure fig, Pair<DrawingMode, Paint> drawingInfo, Integer layerIndex){
+
+    public void addFigure(Figure fig, Pair<DrawingMode, Paint> drawingInfo){
         drawingModeMap.put(fig, drawingInfo);
-        canvasState.addFigure(fig, layerIndex);
+        canvasState.addFigure(fig);
         redrawCanvas();
     }
-    public void deleteFigure(Figure fig, Integer layer){
-        canvasState.deleteFigure(fig, layer);
-        drawingModeMap.remove(fig);
-    }
+
     public void redrawCanvas() {
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        for(Figure fig : canvasState.visibleFigures()){
+        for(Figure fig : canvasState.getAllVisibleFigures()){
             drawingModeMap.get(fig).getLeft().drawFigure(fig, drawingModeMap.get(fig).getRight(), canvasState.isSelected(fig), this.gc);
         }
     }

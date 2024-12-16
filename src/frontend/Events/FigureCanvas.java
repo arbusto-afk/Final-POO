@@ -54,7 +54,7 @@ public class FigureCanvas extends Canvas {
         drawingTool.getCanvasState().deselectFigures();
         selectionDragStartOffset.clear();
         if (drawingTool.isSelectionOn()) {
-            for (Figure fig : canvasState.visibleFigures()) {
+            for (Figure fig : canvasState.getAllVisibleFigures()) {
                 Point topL = fig.getCenterPoint().substract(fig.getWidth() / 2, fig.getHeight() / 2);
                 Point botR = fig.getCenterPoint().add(fig.getWidth() / 2, fig.getHeight() / 2);
                 if (topL.isInRect(startPoint, endPoint) && botR.isInRect(startPoint, endPoint)) {

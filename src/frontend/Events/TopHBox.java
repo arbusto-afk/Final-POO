@@ -11,8 +11,8 @@ import javafx.scene.layout.HBox;
 
 public class TopHBox extends HBox {
 
-    private  CanvasState cs;
-    private DrawingTool dt;
+    final private DrawingTool dt;
+    final private  CanvasState cs;
 
     final String pushForwardButtonText = "Traer al frente";
     final String pushToBottomButtonText = "Enviar al fondo";
@@ -34,11 +34,12 @@ public class TopHBox extends HBox {
     Button removeLayerButton = new Button(removeLayerButtonText);
 
 
-
     public TopHBox(int inset, DrawingTool dt) {
         super(inset);
 
         this.dt = dt;
+        this.cs = dt.getCanvasState();
+
         // Style
         setPadding(new Insets(5));
         setStyle("-fx-background-color: #999");
@@ -58,23 +59,29 @@ public class TopHBox extends HBox {
         hideLayerRadioButton.setToggleGroup(showHideToggle);
 
         // Set actions
-        layersChoiceBox.setOnAction(e->{}); // this::onLayerSelection
-        showLayerRadioButton.setOnAction(e->{}); // this::showToggle
-        hideLayerRadioButton.setOnAction(e->{}); // this::hideToggle
-        addLayerButton.setOnAction(e->{}); // this::createLayer
-        removeLayerButton.setOnAction(e->{}); // this::removeLayer
-        pushForwardButton.setOnAction(e->{}); // this::pushForward
-        pushToBottomButton.setOnAction(e->{}); // this::pushToBottom
+//        layersChoiceBox.setOnAction(e->{}); // this::onLayerSelection
+//        showLayerRadioButton.setOnAction(e->{}); // this::showToggle
+//        hideLayerRadioButton.setOnAction(e->{}); // this::hideToggle
+//        addLayerButton.setOnAction(e->{}); // this::createLayer
+//        removeLayerButton.setOnAction(e->{}); // this::removeLayer
+//        pushForwardButton.setOnAction(e->{}); // this::pushForward
+//        pushToBottomButton.setOnAction(e->{}); // this::pushToBottom
+
+        layersChoiceBox.setOnAction(this::onLayerSelection); // this::onLayerSelection
+        showLayerRadioButton.setOnAction(this::showToggle); // this::showToggle
+        hideLayerRadioButton.setOnAction(this::hideToggle); // this::hideToggle
+        addLayerButton.setOnAction(this::createLayer); // this::createLayer
+        removeLayerButton.setOnAction(this::removeLayer); // this::removeLayer
+        pushForwardButton.setOnAction(this::pushFigureForward); // this::pushForward
+        pushToBottomButton.setOnAction(this::pushFigureToBottom); //
 
 
         // Creates the first 3 layers
-        createLayer();
-        createLayer();
-        createLayer();
+        layersChoiceBox.getItems().addAll("Capa 1","Capa 2", "Capa 3");
         layersChoiceBox.setValue("Capa 1");
 
         // Set up Hide and Show Layer Radio Buttons
-        updateRadioButtons(1);
+        updateRadioButtons();
     }
 
     private void createLayer(ActionEvent event) {
@@ -82,64 +89,62 @@ public class TopHBox extends HBox {
     }
 
     private void createLayer() {
-//        int newLayerNumber = paintPane.canvasState.getNextLayerNumber();
-//        String newLayerName = "Capa " + newLayerNumber;
-//        paintPane.canvasState.increaseNextLayerNumber();
-//        paintPane.layersChoiceBox.getItems().add(newLayerName);
-//        System.out.println(newLayerName);
-//        paintPane.canvasState.addLayer(newLayerName);
-//        paintPane.canvasState.changeLayer(newLayerName);
-//        paintPane.layersChoiceBox.setValue(newLayerName);
-//        paintPane.redrawCanvas();
+        String newLayerName = cs.initializeNewLayer();
+        layersChoiceBox.getItems().add(newLayerName);
+        System.out.println(newLayerName);
+        layersChoiceBox.setValue(newLayerName);
+        dt.redrawCanvas();
     }
+
 
     private void removeLayer(ActionEvent event) {
-      /*  if(paintPane.canvasState.getWorkingLayer().compareTo("Capa 4") < 0){
+        if(layersChoiceBox.getValue().compareTo("Capa 4") < 0)
             return;
-        }
-        String layerToDelete = paintPane.layersChoiceBox.getValue();
+
+        String layerToDelete = layersChoiceBox.getValue();
         System.out.println(layerToDelete);
-        paintPane.layersChoiceBox.setValue("Capa 1");
-        paintPane.layersChoiceBox.getItems().remove(layerToDelete);
-        paintPane.canvasState.deleteLayer(layerToDelete);
-        paintPane.canvasState.changeLayer("Capa 1");
-        paintPane.redrawCanvas();
-    */}
+        layersChoiceBox.setValue("Capa 1");
+        layersChoiceBox.getItems().remove(layerToDelete);
+        cs.deleteLayer(layerToDelete);
+        dt.redrawCanvas();
+    }
+
+    private void onLayerSelection(ActionEvent event) {
+        updateRadioButtons();
+        cs.setWorkingLayer(layersChoiceBox.getValue());
+    }
+
+    private void showToggle(ActionEvent event) {
+        if(showLayerRadioButton.isSelected()) {
+            cs.showLayer(layersChoiceBox.getValue());
+        }
+        dt.redrawCanvas();
+    }
 
     private void hideToggle(ActionEvent event) {
-    /*    if (paintPane.hideLayerRadioButton.isSelected()) {
-            paintPane.canvasState.hideLayer();
+        if(hideLayerRadioButton.isSelected()) {
+            cs.hideLayer(layersChoiceBox.getValue()) ;
         }
-        paintPane.redrawCanvas();
-    */}
-
-    public void showToggle(ActionEvent event) {
-//       if (paintPane.showLayerRadioButton.isSelected()) {
-//            paintPane.canvasState.showLayer();
-//        }
-//        paintPane.redrawCanvas();
-    }
-    Integer selectedLayer;
-    private void onLayerSelection(ActionEvent event) {
-        //.canvasState.changeLayer(layersChoiceBox.getValue());
-    //    updateRadioButtons();
-      //  paintPane.redrawCanvas();
+        dt.redrawCanvas();
     }
 
-    private void updateRadioButtons(Integer selectedLayer){
-      //  Layer dt.getCanvasState().getOrInitializeLayer(selectedLayer);
+
+    private void updateRadioButtons(){
+        if(cs.isLayerHidden(layersChoiceBox.getValue()))
+            hideLayerRadioButton.setSelected(true);
+        else
+            showLayerRadioButton.setSelected(true);
     }
 
-    private void pushForward(ActionEvent event){
-      /*  System.out.println("push to top");
-        paintPane.canvasState.pushForward();
-        paintPane.redrawCanvas();
-    */}
+    private void pushFigureForward(ActionEvent event){
+        System.out.println("push to top");
+        cs.pushSelectedFigureForward(layersChoiceBox.getValue());
+        dt.redrawCanvas();
+    }
 
-    private void pushToBottom(ActionEvent event){
-       /* System.out.println("push to bottom");
-        paintPane.canvasState.pushToBottom();
-        paintPane.redrawCanvas();
-    */}
-
+    private void pushFigureToBottom(ActionEvent event){
+        System.out.println("push to bottom");
+        cs.pushSelectedFigureToBottom(layersChoiceBox.getValue());
+        dt.redrawCanvas();
+    }
 }

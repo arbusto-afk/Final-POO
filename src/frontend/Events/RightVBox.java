@@ -70,7 +70,7 @@ public class RightVBox extends VBox {
         duplicateButton.setOnAction(e -> {
             for (Figure fig : cs.selectedFigures()) {
                 Figure dupl = fig.duplicate(cs.getDUPLICATEOFFSET());
-                drawingTool.addFigure(dupl, drawingTool.getFigurePair(fig), 1);
+                drawingTool.addFigure(dupl, drawingTool.getFigurePair(fig));
             }
             drawingTool.redrawCanvas();
         });

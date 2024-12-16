@@ -17,9 +17,9 @@ public class Layer implements Iterable<Figure> {
     public boolean isHidden() { return this.hidden;}
 
     public Iterator<Figure> iterator(){ return figures.listIterator(); }
-    public List<Figure> figures() { return figures; }
+    public LinkedList<Figure> getFigures() { return figures; }
 
-    public void addFigure(Figure figure) { figures.add(figure); }
+    public void addFigureLast(Figure figure) {figures.addLast(figure);}
 
 
     public void removeFigure(Figure figure) {
@@ -27,6 +27,7 @@ public class Layer implements Iterable<Figure> {
             throw new FigureNotFoundException();
         figures.remove(figure);
     }
+
     public Pair<Figure, Figure> divideFigure(Figure figure) {
         if(!figures.contains(figure))
            throw new FigureNotFoundException();
@@ -37,7 +38,7 @@ public class Layer implements Iterable<Figure> {
         figure.resize(figure.getWidth() / 2, figure.getHeight() / 2);
         figure.move(leftCenter);
         Figure dupl = figure.duplicate(0).move(rightCenter);
-        addFigure(dupl);
+        addFigureLast(dupl);
         return new Pair<>(figure, dupl);
     }
 
