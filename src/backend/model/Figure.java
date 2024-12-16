@@ -1,8 +1,6 @@
 package backend.model;
 
 
-import backend.Pair;
-
 public abstract class Figure {
 
     private Point centerPoint, topLeft, bottomRight;

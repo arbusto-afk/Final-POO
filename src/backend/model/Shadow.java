@@ -1,6 +1,6 @@
 package backend.model;
 
-import java.awt.*;
+
 
 public enum Shadow {
     NONE("none"),

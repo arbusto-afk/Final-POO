@@ -117,21 +117,7 @@ public class FigureCanvas extends Canvas {
                 statusPane.updateStatus("Ninguna figura encontrada");
             }
         }
-       /* if (paintPane.copiedFigure != null) {
-            Figure figureToPasteFormatOnto = null;
-            for (Figure figure : paintPane.canvasState.visibleFiguresAtPoint(eventPoint)) {
-                figureToPasteFormatOnto = figure;
-                //   figureToPasteFormatOnto.setColors(paintPane.copiedColors);
-                break;
-            }
-            if (figureToPasteFormatOnto != null) {
-                figureToPasteFormatOnto.setShadeType(paintPane.copiedFigure.getShadeType());
-                figureToPasteFormatOnto.setHasBevel(paintPane.copiedFigure.getHasBevel());
-                figureToPasteFormatOnto.setColors(paintPane.copiedColors);
-                paintPane.redrawCanvas();
-            }
-            paintPane.copiedFigure = null;
-        }*/
+
         drawingTool.redrawCanvas();
     }
 

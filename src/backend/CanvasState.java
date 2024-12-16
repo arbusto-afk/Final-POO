@@ -1,11 +1,9 @@
 package backend;
-
 import backend.model.Figure;
 import backend.model.Point;
-import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.function.Consumer;
+
 
 public class CanvasState {
 

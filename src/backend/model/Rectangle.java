@@ -1,8 +1,6 @@
     package backend.model;
 
-    import java.util.ArrayList;
-    import java.util.List;
-    import java.awt.*;
+
     public class Rectangle extends Figure {
 
         public Rectangle(Point topLeft, Point bottomRight, Shadow shadeType, boolean hasBevel) {

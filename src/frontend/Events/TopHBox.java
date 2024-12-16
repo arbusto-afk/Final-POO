@@ -1,7 +1,6 @@
 package frontend.Events;
 
 import backend.CanvasState;
-import backend.Layer;
 import frontend.DrawingTool.DrawingTool;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -58,22 +57,14 @@ public class TopHBox extends HBox {
         showLayerRadioButton.setToggleGroup(showHideToggle);
         hideLayerRadioButton.setToggleGroup(showHideToggle);
 
-        // Set actions
-//        layersChoiceBox.setOnAction(e->{}); // this::onLayerSelection
-//        showLayerRadioButton.setOnAction(e->{}); // this::showToggle
-//        hideLayerRadioButton.setOnAction(e->{}); // this::hideToggle
-//        addLayerButton.setOnAction(e->{}); // this::createLayer
-//        removeLayerButton.setOnAction(e->{}); // this::removeLayer
-//        pushForwardButton.setOnAction(e->{}); // this::pushForward
-//        pushToBottomButton.setOnAction(e->{}); // this::pushToBottom
 
-        layersChoiceBox.setOnAction(this::onLayerSelection); // this::onLayerSelection
-        showLayerRadioButton.setOnAction(this::showToggle); // this::showToggle
-        hideLayerRadioButton.setOnAction(this::hideToggle); // this::hideToggle
-        addLayerButton.setOnAction(this::createLayer); // this::createLayer
-        removeLayerButton.setOnAction(this::removeLayer); // this::removeLayer
-        pushForwardButton.setOnAction(this::pushFigureForward); // this::pushForward
-        pushToBottomButton.setOnAction(this::pushFigureToBottom); //
+        layersChoiceBox.setOnAction(this::onLayerSelection);
+        showLayerRadioButton.setOnAction(this::showToggle);
+        hideLayerRadioButton.setOnAction(this::hideToggle);
+        addLayerButton.setOnAction(this::createLayer);
+        removeLayerButton.setOnAction(this::removeLayer);
+        pushForwardButton.setOnAction(this::pushFigureForward);
+        pushToBottomButton.setOnAction(this::pushFigureToBottom);
 
 
         // Creates the first 3 layers

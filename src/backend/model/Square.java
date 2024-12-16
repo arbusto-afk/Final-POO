@@ -1,7 +1,6 @@
 package backend.model;
 
-import java.util.List;
-import java.awt.*;
+
 public class Square extends Rectangle {
 
     public Square(Point topLeft, double size, Shadow shadeType, boolean hasBevel) {

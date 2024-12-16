@@ -6,7 +6,6 @@ import backend.model.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.*;
-
 import java.util.HashMap;
 import java.util.Map;
 

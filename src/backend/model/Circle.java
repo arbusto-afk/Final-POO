@@ -1,7 +1,5 @@
 package backend.model;
 
-import java.util.List;
-import java.awt.*;
 public class Circle extends Ellipse {
 
     public Circle(Point centerPoint, double radius, Shadow shadeType, boolean hasBevel) {
