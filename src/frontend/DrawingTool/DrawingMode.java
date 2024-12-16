@@ -163,21 +163,6 @@ public enum DrawingMode {
                 double xDiff = Math.abs(endPoint.getX() - startPoint.getX());
                 return new Square(startPoint, xDiff, shadowType, hasBevel);
             }
-        },
-        NONE{
-            @Override
-            public Paint getGradient(Color startColor, Color endColor) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void drawFigure(Figure figure, Paint p, boolean isSelected, GraphicsContext gc) {
-                throw new UnsupportedOperationException();
-            }
-            @Override
-            public Figure createFigure(Point p1, Point p2, Shadow shadowType, boolean hasBevel){
-                throw new UnsupportedOperationException();
-            }
         };
 
         private final Integer bevelWidth = 7;

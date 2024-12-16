@@ -82,4 +82,13 @@ public class Point {
         return String.format("{%.2f , %.2f}", x, y);
     }
 
+    @Override
+    public boolean equals(Object o){
+        if(this == o)
+            return true;
+        if(!(o instanceof Point))
+            return false;
+        Point p = (Point)o;
+        return this.x == p.getX() && this.y == p .getY();
+    }
 }

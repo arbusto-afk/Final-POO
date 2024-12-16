@@ -4,6 +4,7 @@ import backend.CanvasState;
 import backend.model.Figure;
 import backend.model.Point;
 import frontend.DrawingTool.DrawingTool;
+import frontend.StatusPane;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
 
@@ -11,17 +12,19 @@ public class FigureCanvas extends Canvas {
 
     private final CanvasState canvasState;
     private final DrawingTool drawingTool;
+    private final StatusPane statusPane;
     private Point startPoint;
     private Point selectionDragStartOffset;
 
-    public FigureCanvas(CanvasState canvasState, double width, double height){
+    public FigureCanvas(CanvasState canvasState, double width, double height, StatusPane statusPane){
         super(width, height);
         this.canvasState = canvasState;
         this.drawingTool = new DrawingTool(this, canvasState);
+        this.statusPane = statusPane;
 
         this.setOnMousePressed(this::onMousePressed);
         this.setOnMouseReleased(this::onMouseRelease);
-        this.setOnMouseMoved(this::onMouseRelease);
+        this.setOnMouseMoved(this::onMouseMoved);
         this.setOnMouseClicked(this::onMouseClicked);
         this.setOnDragDetected(this::onMouseDragged);
     }
@@ -31,11 +34,7 @@ public class FigureCanvas extends Canvas {
     }
 
     private void onMousePressed(MouseEvent event) {
-        Point eventPoint = new Point(event.getX(), event.getY());
-        startPoint = eventPoint;
-        /*if (!canvasState.selectedFigures().isEmpty() && selectionDragStartOffset == null) {
-            selectionDragStartOffset = canvasState.selectedFigures().getFirst().getCenterPoint().getDifference(eventPoint);
-        }*/
+        startPoint = new Point(event.getX(), event.getY());
     }
     private void onMouseRelease(MouseEvent event) {
         if (startPoint == null) {
@@ -45,10 +44,10 @@ public class FigureCanvas extends Canvas {
         if (endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
             return;
         }
-        drawingTool.drawFigure(startPoint, endPoint);
 
         //todo properly validate bool
-        if(drawingTool.isSelectionOn()) {
+        drawingTool.getCanvasState().deselectFigures();
+        if (drawingTool.isSelectionOn()) {
             for (Figure fig : canvasState.visibleFigures()) {
                 Point topL = fig.getCenterPoint().substract(fig.getWidth() / 2, fig.getHeight() / 2);
                 Point botR = fig.getCenterPoint().add(fig.getWidth() / 2, fig.getHeight() / 2);
@@ -57,43 +56,44 @@ public class FigureCanvas extends Canvas {
                 }
             }
         }
-        startPoint = null;
+        if (drawingTool.getUseDrawingMode()) {
+            drawingTool.createAndAddFigure(startPoint, endPoint);
+        }
+        //startPoint = null;
         drawingTool.redrawCanvas();
     }
-    //TODO
+
     private void onMouseMoved(MouseEvent event) {
-     /*   Point eventPoint = new Point(event.getX(), event.getY());
+        Point eventPoint = new Point(event.getX(), event.getY());
         StringBuilder strB = new StringBuilder();
         for (Figure fig : canvasState.visibleFiguresAtPoint(eventPoint)) {
             strB.append(fig.toString());
         }
-        StatusPane sPane = (StatusPane) event.getSource();
         if (strB.isEmpty()) {
-            sPane.updateStatus(eventPoint.toString());
+            this.statusPane.updateStatus(eventPoint.toString());
         } else {
-            sPane.updateStatus(strB.toString());
-        }*/
+            this.statusPane.updateStatus(strB.toString());
+        }
     }
 
     public void onMouseClicked(MouseEvent event) {
         Point eventPoint = new Point(event.getX(), event.getY());
-      /*  if (paintPane.selectionButton.isSelected()) {
+        //single selection
+            if (drawingTool.isSelectionOn() && (eventPoint.equals(startPoint))) {
             boolean found = false;
+            drawingTool.getCanvasState().deselectFigures();
             StringBuilder label = new StringBuilder("Se seleccionó: ");
-            for (Figure fig : paintPane.canvasState.visibleFiguresAtPoint(eventPoint)) {
+            for (Figure fig : drawingTool.getCanvasState().visibleFiguresAtPoint(eventPoint)) {
                 label.append(fig.toString());
-                paintPane.selectedFigure = fig;
+                statusPane.updateStatus(label.toString());
+                drawingTool.getCanvasState().selectFigure(fig);
                 found = true;
             }
-            if (found) {
-                paintPane.statusPane.updateStatus(label.toString());
-            } else {
-                paintPane.statusPane.updateStatus("Ninguna figura encontrada");
-                paintPane.selectedFigure = null;
+            if (!found) {
+                statusPane.updateStatus("Ninguna figura encontrada");
             }
-            paintPane.redrawCanvas();
         }
-        if (paintPane.copiedFigure != null) {
+       /* if (paintPane.copiedFigure != null) {
             Figure figureToPasteFormatOnto = null;
             for (Figure figure : paintPane.canvasState.visibleFiguresAtPoint(eventPoint)) {
                 figureToPasteFormatOnto = figure;
@@ -108,6 +108,8 @@ public class FigureCanvas extends Canvas {
             }
             paintPane.copiedFigure = null;
         }*/
+        drawingTool.redrawCanvas();
+
     }
 
 

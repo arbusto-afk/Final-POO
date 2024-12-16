@@ -73,7 +73,7 @@
         public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 			this.canvasState = canvasState;
 			this.statusPane = statusPane;
-			FigureCanvas canvas = new FigureCanvas(canvasState, 800, 600);
+			FigureCanvas canvas = new FigureCanvas(canvasState, 800, 600, statusPane);
 			drawingTool = canvas.getDrawingTool();
 			LeftVBox test1 = new LeftVBox(drawingTool);
 			this.setLeft(test1);

@@ -35,8 +35,8 @@ public abstract class Figure {
 
     private void setCorners(){
         Point cornerOffset = new Point(height / 2, width / 2);
-        this.bottomRight = centerPoint.add(cornerOffset);
-        this.topLeft = centerPoint.substract(cornerOffset);
+        this.bottomRight = centerPoint.add(cornerOffset.invert());
+        this.topLeft = centerPoint.substract(cornerOffset.invert());
     }
     public void resize(double width, double height){
         this.width = width;
@@ -71,9 +71,5 @@ public abstract class Figure {
 
   //  public abstract List<Figure> divide();
     public abstract Figure duplicate(Integer offSet);
-
-    /*public Pair<Figure, Figure> divide(){
-
-    }*/
 }
 

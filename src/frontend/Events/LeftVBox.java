@@ -63,24 +63,18 @@ public class LeftVBox extends VBox {
         // Set up choice box
         shadowTypeBox.setValue(Shadow.NONE);
         shadowTypeBox.getItems().addAll(Shadow.values());
-
-        selectionButton.setOnAction(e->{
-            drawingTool.setDrawingMode(DrawingMode.NONE);
-            //todo remove this
-            drawingTool.setSelectionOn(selectionButton.isSelected());
-        }
-        );
+        selectionButton.setOnAction(e-> drawingTool.setSelectionOn(selectionButton.isSelected()));
         rectangleButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.RECT));
         squareButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.SQUARE));
         circleButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.CIRCLE));
         ellipseButton.setOnAction(e -> drawingTool.setDrawingMode(DrawingMode.ELLIPSE));
         tools.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
             if(newToggle == null) {
-                drawingTool.setDrawingMode(DrawingMode.NONE);
+                drawingTool.setUseDrawingMode(false);
             }
-            //todo remove this
             drawingTool.setSelectionOn(selectionButton.isSelected());
         });
+
 
         deleteButton.setOnAction(e -> {
             for(Figure fig : drawingTool.getCanvasState().selectedFigures()) {
