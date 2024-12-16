@@ -15,6 +15,7 @@ public class CanvasState {
      */
     private final Map<Integer, Layer> layers = new TreeMap<>();
     private final Set<Figure> selectedFigures = new HashSet<>();
+    private final Set<Set<Figure>> figureGroups = new HashSet<>();
 
     private final Integer DUPLICATEOFFSET = 15;
     private final Integer STARTINGLAYERS = 3;
@@ -107,14 +108,40 @@ public class CanvasState {
         selectedFigures.clear();
     }
 
+    public Set<Figure> getFigureGroup(Figure fig){
+        for(Set<Figure> s : figureGroups){
+            if(s.contains(fig))
+                return s;
+        }
+        return null;
+    }
     public void groupFigures(Iterable<Figure> figuresToGroup){
+        Set<Figure> group = new HashSet<>();
         for(Figure fig : figuresToGroup){
 
+            Set<Figure> currentGroup = getFigureGroup(fig);
+            if(currentGroup != null) {
+                figureGroups.remove(currentGroup);
+                group.addAll(currentGroup);
+            } else {
+                group.add(fig);
+            }
+        }
+        figureGroups.add(group);
+    }
+    public void ungroupFigures(Iterable<Figure> figuresToUngroup){
+        for(Figure fig : figuresToUngroup){
+            if(getFigureGroup(fig) != null){
+                figureGroups.remove(getFigureGroup(fig));
+            }
         }
     }
 
     public Integer getDUPLICATEOFFSET() {
         return DUPLICATEOFFSET;
+    }
+    public boolean isSelectedFigureCount(Integer n){
+        return selectedFigures.size() == n;
     }
 }
 

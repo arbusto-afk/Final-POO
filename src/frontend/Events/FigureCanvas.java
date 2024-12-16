@@ -7,11 +7,9 @@ import frontend.DrawingTool.DrawingTool;
 import frontend.StatusPane;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.MouseEvent;
+import java.util.Set;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FigureCanvas extends Canvas {
 
@@ -60,7 +58,12 @@ public class FigureCanvas extends Canvas {
                 Point topL = fig.getCenterPoint().substract(fig.getWidth() / 2, fig.getHeight() / 2);
                 Point botR = fig.getCenterPoint().add(fig.getWidth() / 2, fig.getHeight() / 2);
                 if (topL.isInRect(startPoint, endPoint) && botR.isInRect(startPoint, endPoint)) {
-                    canvasState.selectFigure(fig);
+                    Set<Figure> group = canvasState.getFigureGroup(fig);
+                    if(group != null) {
+                        canvasState.selectFigure(group);
+                    } else {
+                        canvasState.selectFigure(fig);
+                    }
                 }
             }
         }
@@ -84,18 +87,23 @@ public class FigureCanvas extends Canvas {
 
         drawingTool.redrawCanvas();
     }
-
     public void onMouseClicked(MouseEvent event) {
         Point eventPoint = new Point(event.getX(), event.getY());
         //single selection
-            if (drawingTool.isSelectionOn() && (eventPoint.equals(startPoint))) {
+        if (drawingTool.isSelectionOn() && (eventPoint.equals(startPoint))) {
             boolean found = false;
             drawingTool.getCanvasState().deselectFigures();
             StringBuilder label = new StringBuilder("Se seleccionó: ");
             for (Figure fig : drawingTool.getCanvasState().visibleFiguresAtPoint(eventPoint)) {
                 label.append(fig.toString());
                 statusPane.updateStatus(label.toString());
-                drawingTool.getCanvasState().selectFigure(fig);
+                canvasState.deselectFigures();
+                Set<Figure> group = canvasState.getFigureGroup(fig);
+                if(group != null) {
+                    canvasState.selectFigure(group);
+                } else {
+                    canvasState.selectFigure(fig);
+                }
                 found = true;
             }
             if (!found) {
@@ -118,7 +126,6 @@ public class FigureCanvas extends Canvas {
             paintPane.copiedFigure = null;
         }*/
         drawingTool.redrawCanvas();
-
     }
 
 

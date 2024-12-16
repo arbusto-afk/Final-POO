@@ -1,0 +1,35 @@
+[33m28636d9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m arrastrado multiple
+[33md1fd38e[m Fixed setCorners private method on figures, updated pair class, multiple selection done, click selection done
+[33me84fe8d[m added topleft and bottomright to figures previously it was particularly on rectangle class, now every figure has them
+[33md1fdea3[m drawing tool improvements, new addFigure, major refactor
+[33mde92c2f[m anda barra izq y barra der, falta agrupar y desagrupar
+[33m04b29e8[m expanded DrawingMode, removed figureBuilder as its now integrated in drawing mode, major improvements to LeftVBox, RightVBox y TopHBox, borre componentInitializer y painPaneEvent que estan depreciados
+[33m741b5b8[m Movie topButtonsBox a Events
+[33ma3d9de7[m Cree topButtonsBox y movi todo lo que tenia que ver con eso ahi.
+[33m0de7f8f[m Nueva Clase RightVBoxEvents con sus buttons y actions de cada uno
+[33mbe76779[m created drawingMode, created FigureBuilder, expanded drawing Tool, started modularizing events
+[33m366a13f[m nuevas mejoras en la capas, ahora guardamos colores en el backend como un generic, mejore drawingTools, cree canvasEvents
+[33m28fda88[m new layer implementations major refactor
+[33m5337841[m Proyecto funcionando pero refactor pendiente
+[33m56ea213[m implemente las capas (falta reestructurar el codigo) y ocultar y mostrar capas
+[33m2368f35[m Modificacion clase Point
+[33m5c158c1[m Cambio en addY de point y arreglo del flipV
+[33m7425898[m Cambio en addY de point y arreglo del flipV
+[33m9635c97[m Merge remote-tracking branch 'origin/main'
+[33m22b8488[m perdon, era esta xd
+[33mfcd213c[m Cree un archivo con todas las funciones de los eventos
+[33me9df372[m added subdivide, removed colors from backend, major refactor of flipV, flipH, dupl, and rot
+[33md84e4e0[m Cree drawGraphicContext para mayor modularizacion del frontend
+[33m7c36262[m Minor switch refactor on paintpane.java
+[33meed07e8[m Rectangle moving fix
+[33mbd87d88[m further refactor, moving linearshapes is currently being optimized
+[33m816339f[m Se agrego el duplicado a las figuras
+[33m85e0cca[m Se modificaron todas las figuras en el backend, girar y voltear de forma vertical y horizontal. Se implemento en el frontend las aplicaciones de los botones para las acciones anteriores.
+[33m1a266ba[m frontend fix
+[33m9401dcf[m merge con updates de mari, agregamos buttonsBox derecha implemetamos rotacion
+[33m85bcfbe[m backend and frontend were modified to rotate figures
+[33m4a6eb1d[m Major refactor, created abstract clases LinearFigure and RadialFigure, Square now extends Rectangle, further modularization, added proper bevel on ellipses, added copy format button, TODO: copy format beetween shapes with different gradients is incompatible so we must fix this
+[33m317f484[m Major refactor, created abstract clases LinearFigure and RadialFigure, Square now extends Rectangle, further modularization, added proper bevel on ellipses, added copy format button, TODO: copy format beetween shapes with different gradients is incompatible so we must fix this
+[33m451d18f[m missing semicolon and bracket on previous commit
+[33m50b384e[m bevel fix and starting to refactor
+[33m002b582[m First commit. Set agrego sombreado, color gradiente, implementacion inicial de biselado, falta hacer una refactor mayor por estilo de codigo

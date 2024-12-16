@@ -99,8 +99,6 @@ public class LeftVBox extends VBox {
                 drawingTool.setShadowType(shadowTypeBox.getValue());
                 drawingTool.redrawCanvas();
         });
-        //todo copy format (cast radial to lineargradient) and viceversa
-        //todo copy not from first
         copyFormatButton.setOnAction(e -> {
             if(copiedFigure != null) {
                 for (Figure fig : drawingTool.getCanvasState().selectedFigures()) {

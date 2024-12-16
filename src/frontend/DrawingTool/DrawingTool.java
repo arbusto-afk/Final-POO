@@ -27,7 +27,7 @@ public class DrawingTool {
         drawingModeMap.remove(fig);
         drawingModeMap.put(fig, options);
     }
-    public void setFigurePair(Figure fig, Pair<DrawingMode, Paint> pair){
+    public void setFigureDrawingOptionsPair(Figure fig, Pair<DrawingMode, Paint> pair){
         drawingModeMap.remove(fig);
         drawingModeMap.put(fig, pair);
     }
