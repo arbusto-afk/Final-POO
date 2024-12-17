@@ -147,11 +147,10 @@ public class DrawingTool {
     public void pasteFormatOnto(Figure fig){
         if(copiedFigure == null)
             return;
-      //  Pair<DrawingMode, Paint> copiedFormat = getFigurePair(copiedFigure);
         fig.setShadeType(copiedFigure.getShadeType());
         fig.setHasBevel(copiedFigure.getHasBevel());
         DrawingMode currentMode = getFigurePair(fig).getLeft();
-        Pair<DrawingMode, Paint> options = new Pair<>(currentMode, currentMode.getGradient(Color.PINK, Color.DEEPPINK));
+        Pair<DrawingMode, Paint> options = new Pair<>(currentMode, getFigurePair(copiedFigure).getRight());
         setFigureDrawingOptionsPair(fig, options );
         redrawCanvas();
     }

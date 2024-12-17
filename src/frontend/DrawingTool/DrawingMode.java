@@ -96,9 +96,7 @@ public enum DrawingMode {
                 double xDiff = Math.abs(endPoint.getX() - startPoint.getX());
                 return new Circle(startPoint, xDiff, shadowType, hasBevel);
             }
-           /* public Pair<Color, Color> getGradientColorPair(RadialGradient rg){
-                return ELLIPSE.getGradientColorPair( rg);
-            }*/
+
         },
         RECT {
             @Override
@@ -172,9 +170,7 @@ public enum DrawingMode {
                 double xDiff = Math.abs(endPoint.getX() - startPoint.getX());
                 return new Square(startPoint, xDiff, shadowType, hasBevel);
             }
-           /* public Pair<Color, Color> getGradientColorPair(LinearGradient lg){
-                return RECT.getGradientColorPair(lg);
-            }*/
+
         };
 
 
@@ -204,7 +200,7 @@ public enum DrawingMode {
         public Pair<Color, Color> getGradientColorPair(LinearGradient lg) {
         return getColorPairFromStops(lg.getStops());
         }
-        
+
         public Pair<Color, Color> getColorPairFromStops(List<Stop> stops) {
              if(stops.isEmpty()){ return new Pair<>(null,null);}
              Color firstColor = stops.get(0).getColor();
