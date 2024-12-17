@@ -1,9 +1,12 @@
 package frontend.DrawingTool;
-
+import javafx.scene.paint.Stop;
+import backend.Pair;
 import backend.model.*;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.*;
 import javafx.scene.shape.ArcType;
+
+import java.util.List;
 
 public enum DrawingMode {
         ELLIPSE {
@@ -14,6 +17,7 @@ public enum DrawingMode {
                         new Stop(0, startColor),
                         new Stop(1, endColor));
             }
+
             @Override
             public void drawFigure(Figure fig, Paint p, boolean isSelected, GraphicsContext gc){
                 Ellipse figure = (Ellipse) fig;
@@ -74,6 +78,7 @@ public enum DrawingMode {
                 double yDiff = Math.abs(endPoint.getY() - startPoint.getY());
                 return new Ellipse(centerPoint, xDiff, yDiff, shadowType, hasBevel);
             }
+
             },
         CIRCLE {
             @Override
@@ -91,6 +96,9 @@ public enum DrawingMode {
                 double xDiff = Math.abs(endPoint.getX() - startPoint.getX());
                 return new Circle(startPoint, xDiff, shadowType, hasBevel);
             }
+           /* public Pair<Color, Color> getGradientColorPair(RadialGradient rg){
+                return ELLIPSE.getGradientColorPair( rg);
+            }*/
         },
         RECT {
             @Override
@@ -147,6 +155,7 @@ public enum DrawingMode {
             public Rectangle createFigure(Point startPoint, Point endPoint, Shadow shadowType, boolean hasBevel) {
                 return new Rectangle(startPoint, endPoint, shadowType, hasBevel);
             }
+
         },
         SQUARE {
             @Override
@@ -163,9 +172,14 @@ public enum DrawingMode {
                 double xDiff = Math.abs(endPoint.getX() - startPoint.getX());
                 return new Square(startPoint, xDiff, shadowType, hasBevel);
             }
+           /* public Pair<Color, Color> getGradientColorPair(LinearGradient lg){
+                return RECT.getGradientColorPair(lg);
+            }*/
         };
 
-        private final Integer bevelWidth = 7;
+
+
+    private final Integer bevelWidth = 7;
         private final Integer defaultWidth = 2;
         private final Color lineColor = Color.BLACK;
         private final Color selectedLineColor = Color.RED;
@@ -180,8 +194,22 @@ public enum DrawingMode {
             return selectedLineColor;
         }
         public Integer getBevelWidth() { return bevelWidth; }
-
         public abstract Paint getGradient(Color startColor, Color endColor);
         public abstract void drawFigure(Figure figure, Paint p, boolean isSelected, GraphicsContext gc);
         public abstract Figure createFigure(Point p1, Point p2, Shadow shadowType, boolean hasBevel);
-    }
+
+         public Pair<Color, Color> getGradientColorPair(RadialGradient rg) {
+        return getColorPairFromStops(rg.getStops());
+         }
+        public Pair<Color, Color> getGradientColorPair(LinearGradient lg) {
+        return getColorPairFromStops(lg.getStops());
+        }
+        
+        public Pair<Color, Color> getColorPairFromStops(List<Stop> stops) {
+             if(stops.isEmpty()){ return new Pair<>(null,null);}
+             Color firstColor = stops.get(0).getColor();
+             Color lastColor = stops.get(stops.size() - 1).getColor();
+             return new Pair<>(firstColor, lastColor);
+         }
+
+}
